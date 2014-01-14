@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "say.js",
+  "sourceRoot": "",
+  "sources": [
+    "say.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;CAAA,KAAA,QAAA;KAAA;oSAAA;;CAAA,CAAC,CAAY,IAAA,CAAb,IAAa;;CAAb,CAEM,KAAO;CAEX;;;;;CAAA;;CAAA,CAAiB,CAAjB,KAAK,CAAC;CACJ,EAAA,OAAA;CAAA,EAAA,GAAA;CACE,CAAM,EAAN,CAAA,GAAA;CAAA,CACU,CAAK,GAAL,CAAV,CAAA,CADA;CADF,OAAA;CAGC,CAAa,CAAd,CAAC,GAAD,CAAA,KAAA;CAJF,IAAK;;CAAL;;CAFwB;CAF1B"
+}
