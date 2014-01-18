@@ -18,5 +18,5 @@ callback = (error, stdout, stderr)->
 
 setInterval ->
   p.pingGoogle callback
-, 2000
+, 1000
 

@@ -28,7 +28,7 @@
 
   setInterval(function() {
     return p.pingGoogle(callback);
-  }, 5000);
+  }, 1000);
 
 }).call(this);
 
