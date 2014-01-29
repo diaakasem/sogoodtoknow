@@ -23,6 +23,45 @@
   exports.Wikipedia = (function() {
     function Wikipedia() {}
 
+    Wikipedia.prototype.analyze = function(text) {
+      var textArr, words;
+      text = text.toLowerCase();
+      textArr = text.split(' ');
+      words = {};
+      _.each(textArr, function(word) {
+        if (word.length < 5) {
+          return;
+        }
+        return words[word] = words[word] !== void 0 ? words[word] + 1 : 0;
+      });
+      words = _.map(words, function(value, key) {
+        return {
+          name: key,
+          rank: value
+        };
+      });
+      return words;
+    };
+
+    Wikipedia.prototype.best = function(dict, count) {
+      var ranks;
+      if (count == null) {
+        count = 10;
+      }
+      ranks = _.chain(dict).sortBy('rank').reverse().first(count).value();
+      console.log(ranks);
+      return ranks;
+    };
+
+    Wikipedia.prototype.keywords = function(text) {
+      var keywords, ranks, words;
+      words = this.analyze(text);
+      ranks = this.best(words);
+      keywords = _.map(ranks, 'name').join(', ');
+      console.log(keywords);
+      return keywords;
+    };
+
     Wikipedia.prototype.dailyArticle = function(lang, callback) {
       var base_url,
         _this = this;
@@ -31,11 +70,10 @@
       }
       base_url = "http://" + lang + ".wikipedia.org";
       return jqueryify(base_url, function(err, html) {
-        var $, link, title, url;
+        var $, link, url;
         $ = html.$;
         link = $(lang_selector[lang]).first();
         if (link.length) {
-          title = link.text();
           url = base_url + link.attr("href");
           return _this.scrape(url, callback);
         }
@@ -48,6 +86,8 @@
         var title;
         title = window.$('#firstHeading').find('span').text();
         return _this.getText(window, function(text) {
+          var keywords;
+          keywords = _this.keywords(text);
           return _this.getImages(window, function(images) {
             return callback(title, text, images);
           });

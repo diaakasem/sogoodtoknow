@@ -20,6 +20,31 @@ lang_selector =
 
 class exports.Wikipedia
 
+  analyze: (text)->
+    text = text.toLowerCase()
+    textArr = text.split(' ')
+    words = {}
+    _.each textArr, (word)->
+      return  if word.length < 5
+      words[word] = if words[word] isnt undefined  then words[word] + 1 else 0
+    words = _.map words, (value, key)->
+      name: key
+      rank: value
+    #console.log words
+    words
+
+  best: (dict, count=10)->
+    ranks = _.chain(dict).sortBy('rank').reverse().first(count).value()
+    console.log ranks
+    ranks
+
+  keywords: (text)->
+    words = @analyze text
+    ranks = @best words
+    keywords = _.map(ranks, 'name').join(', ')
+    console.log keywords
+    keywords
+
   dailyArticle: (lang, callback) ->
     lang = "en"  if lang?
     base_url = "http://" + lang + ".wikipedia.org"
@@ -27,7 +52,6 @@ class exports.Wikipedia
       $ = html.$
       link = $(lang_selector[lang]).first()
       if link.length
-        title = link.text()
         url = base_url + link.attr("href")
         @scrape url, callback
 
@@ -35,6 +59,7 @@ class exports.Wikipedia
     jqueryify url, (err, window)=>
       title = window.$('#firstHeading').find('span').text()
       @getText window, (text)=>
+        keywords = @keywords text
         @getImages window, (images)->
           callback title, text, images
 
