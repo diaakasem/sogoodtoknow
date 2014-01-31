@@ -13,6 +13,8 @@ controller = (scope, http, params, timeout) ->
   promise = http method: 'get', url: "/project/#{params.name}"
   promise.success (result)=>
     scope.project = result
+    scope.project.images = _.filter scope.project.images, (image)->
+      !scope.isSvg(image)
     i = 0
     $('.image img').attr 'src', scope.pathOf(scope.project.images[i++])
 
@@ -24,6 +26,7 @@ controller = (scope, http, params, timeout) ->
       time = Math.floor(scope.duration * 1000 /scope.project.images.length)
       scroll = $('.text')[0].scrollHeight / scope.project.images.length
       changeImage = ->
+        return  if i >= scope.project.images.length
         $('.image img').fadeOut 500, =>
           $('.image img').attr 'src', scope.pathOf(scope.project.images[i++])
           $('.image img').fadeIn 500

@@ -32,7 +32,7 @@ class exports.Wikipedia
       rank: value
     words = _.omit words, ['this', 'that', 'south', 'north', 'east', 'west',
     'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here',
-    'against', 'their']
+    'against', 'their', 'other']
     words
 
   best: (dict, count=10)->

@@ -63,16 +63,19 @@
     };
 
     Manager.prototype.downloadImages = function(uri, images) {
-      var dot, i, image, img, _i, _len, _results;
-      _results = [];
-      for (i = _i = 0, _len = images.length; _i < _len; i = ++_i) {
-        img = images[i];
-        console.log(img);
-        image = img + "";
-        dot = image.lastIndexOf('.');
-        _results.push(download(img.url, path.join(uri, i + image.substring(dot))));
-      }
-      return _results;
+      var downloadImage, i;
+      i = 0;
+      downloadImage = function() {
+        var dot, img;
+        if (i >= images.length) {
+          return;
+        }
+        img = images[i++];
+        dot = img.name.lastIndexOf('.');
+        download(img.url, path.join(uri, i + img.name.substring(dot)));
+        return setTimeout(downloadImage, 500);
+      };
+      return setTimeout(downloadImage, 1000);
     };
 
     Manager.prototype.nameOf = function(title) {

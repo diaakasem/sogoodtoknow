@@ -47,9 +47,14 @@ class Manager
       console.log 'Done : ' + file
 
   downloadImages: (uri, images)->
-    for img, i in images
+    i = 0
+    downloadImage = ->
+      return  if i >= images.length
+      img = images[i++]
       dot = img.name.lastIndexOf('.')
       download img.url, path.join(uri, i + img.name.substring(dot))
+      setTimeout downloadImage, 1000
+    setTimeout downloadImage, 1000
 
   nameOf: (title)->
     name = title.toLowerCase()

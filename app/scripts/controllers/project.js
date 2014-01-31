@@ -25,6 +25,9 @@
     return promise.success(function(result) {
       var audioElement, i;
       scope.project = result;
+      scope.project.images = _.filter(scope.project.images, function(image) {
+        return !scope.isSvg(image);
+      });
       i = 0;
       $('.image img').attr('src', scope.pathOf(scope.project.images[i++]));
       audioElement = document.createElement('audio');
@@ -37,6 +40,9 @@
         scroll = $('.text')[0].scrollHeight / scope.project.images.length;
         changeImage = function() {
           var _this = this;
+          if (i >= scope.project.images.length) {
+            return;
+          }
           return $('.image img').fadeOut(500, function() {
             var scrollTo;
             $('.image img').attr('src', scope.pathOf(scope.project.images[i++]));
