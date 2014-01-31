@@ -1,7 +1,9 @@
 {
   "name": "node-executer",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "ejs": "~0.8.5"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-copy": "~0.4.1",

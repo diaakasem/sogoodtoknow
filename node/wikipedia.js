@@ -40,17 +40,15 @@
           rank: value
         };
       });
+      words = _.omit(words, ['this', 'that', 'south', 'north', 'east', 'west', 'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here', 'against', 'their']);
       return words;
     };
 
     Wikipedia.prototype.best = function(dict, count) {
-      var ranks;
       if (count == null) {
         count = 10;
       }
-      ranks = _.chain(dict).sortBy('rank').reverse().first(count).value();
-      console.log(ranks);
-      return ranks;
+      return _.chain(dict).sortBy('rank').reverse().first(count).value();
     };
 
     Wikipedia.prototype.keywords = function(text) {
@@ -82,9 +80,11 @@
 
     Wikipedia.prototype.scrape = function(url, callback) {
       var _this = this;
+      console.log(url);
       return jqueryify(url, function(err, window) {
-        var title;
-        title = window.$('#firstHeading').find('span').text();
+        var $, title;
+        $ = window.$;
+        title = $('#firstHeading').find('span').text();
         return _this.getText(window, function(text) {
           var keywords;
           keywords = _this.keywords(text);
@@ -117,7 +117,8 @@
     Wikipedia.prototype.getText = function(window, callback) {
       var $, text;
       $ = window.$;
-      text = $('#mw-content-text>p').text();
+      $.fn.reverse = [].reverse;
+      text = $('#mw-content-text p:empty').first().prevAll('p').reverse().text();
       text = text.replace(/\[\d+\]/g, '');
       return callback(text);
     };

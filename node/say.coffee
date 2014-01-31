@@ -24,6 +24,14 @@ class exports.Say extends Executer
       cmd.command += " -v #{v}"
     @execute(cmd, callback)
 
+  toMp3: (file, callback)->
+    cmd =
+      name: 'convert'
+      command: "ffmpeg -i #{file} -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 #{file}.mp3"
+
+    @execute cmd, ->
+      callback?(file + ".mp3")
+
   produce: (audioFile, textFile, callback)->
     v = @voice()
     cmd =
@@ -32,5 +40,6 @@ class exports.Say extends Executer
     if v
       cmd.command += "-v #{v} "
 
-    console.log cmd.command
-    @execute(cmd, callback)
+    @execute cmd, =>
+      @toMp3 audioFile, (file)=>
+        callback?(file)

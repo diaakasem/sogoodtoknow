@@ -29,7 +29,7 @@ class Manager
     @wiki = new Wikipedia()
 
   pathOf: (title)->
-    path.join __dirname, '..', 'projects', title
+    path.join __dirname, '..', 'app', 'projects', title
 
   structure: (title)->
     p = @pathOf title
@@ -42,12 +42,14 @@ class Manager
 
   speak: (title, textFile, audioFile)->
     title = cmdString(title)
-    speaker.produce audioFile, textFile, ->
-      console.log 'Done'
+    speaker.produce audioFile, textFile, (file)->
+      fs.unlink audioFile
+      console.log 'Done : ' + file
 
   downloadImages: (uri, images)->
-    for img in images
-      download img.url, path.join(uri, img.name)
+    for img, i in images
+      dot = img.name.lastIndexOf('.')
+      download img.url, path.join(uri, i + img.name.substring(dot))
 
   nameOf: (title)->
     name = title.toLowerCase()
@@ -61,11 +63,18 @@ class Manager
     fs.writeFileSync project.text, text
     @speak title, project.text, project.audio
 
-  run: ->
-    for lang in @langs
-      @wiki.dailyArticle lang, (title, text, images)=>
+  run: (url)->
+    if url
+      @wiki.scrape url, (title, text, images)=>
         @build(title, text, images)
+    else
+      for lang in @langs
+        @wiki.dailyArticle lang, (title, text, images)=>
+          @build(title, text, images)
 
 m = new Manager()
-m.run()
+if process.argv.length > 1
+  m.run(process.argv[2])
+else
+  m.run()
 

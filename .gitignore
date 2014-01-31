@@ -1,5 +1,5 @@
 *.map
 node_modules
 files
-projects
+app/projects
 app/bower_components

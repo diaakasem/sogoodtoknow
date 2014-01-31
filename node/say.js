@@ -45,8 +45,20 @@
       return this.execute(cmd, callback);
     };
 
+    Say.prototype.toMp3 = function(file, callback) {
+      var cmd;
+      cmd = {
+        name: 'convert',
+        command: "ffmpeg -i " + file + " -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 " + file + ".mp3"
+      };
+      return this.execute(cmd, function() {
+        return typeof callback === "function" ? callback(file + ".mp3") : void 0;
+      });
+    };
+
     Say.prototype.produce = function(audioFile, textFile, callback) {
-      var cmd, v;
+      var cmd, v,
+        _this = this;
       v = this.voice();
       cmd = {
         name: 'say',
@@ -55,8 +67,11 @@
       if (v) {
         cmd.command += "-v " + v + " ";
       }
-      console.log(cmd.command);
-      return this.execute(cmd, callback);
+      return this.execute(cmd, function() {
+        return _this.toMp3(audioFile, function(file) {
+          return typeof callback === "function" ? callback(file) : void 0;
+        });
+      });
     };
 
     return Say;

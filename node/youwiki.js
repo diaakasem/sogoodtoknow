@@ -27,7 +27,6 @@
   request = require("request");
 
   download = function(uri, filename) {
-    console.log("Downloading " + uri + " into " + filename);
     return request(uri).pipe(fs.createWriteStream(filename));
   };
 
@@ -39,37 +38,39 @@
     }
 
     Manager.prototype.pathOf = function(title) {
-      return path.join('..', 'projects');
+      return path.join(__dirname, '..', 'app', 'projects', title);
     };
 
     Manager.prototype.structure = function(title) {
       var p;
       p = this.pathOf(title);
-      console.log(p);
-      mkdir(p);
-      mkdir(path.join(p, 'images'));
-      mkdir(path.join(p, 'audio'));
+      mkdirp.sync(p);
+      mkdirp.sync(path.join(p, 'images'));
       return {
         root: p,
         images: path.join(p, 'images'),
         audio: path.join(p, 'audio.aiff'),
-        texts: path.join(p, 'text.txt')
+        text: path.join(p, 'text.txt')
       };
     };
 
     Manager.prototype.speak = function(title, textFile, audioFile) {
       title = cmdString(title);
-      return speaker.produce(audioFile, textFile, function() {
-        return console.log('Done');
+      return speaker.produce(audioFile, textFile, function(file) {
+        fs.unlink(audioFile);
+        return console.log('Done : ' + file);
       });
     };
 
     Manager.prototype.downloadImages = function(uri, images) {
-      var img, _i, _len, _results;
+      var dot, i, image, img, _i, _len, _results;
       _results = [];
-      for (_i = 0, _len = images.length; _i < _len; _i++) {
-        img = images[_i];
-        _results.push(download(img.url, path.join(uri, img.name)));
+      for (i = _i = 0, _len = images.length; _i < _len; i = ++_i) {
+        img = images[i];
+        console.log(img);
+        image = img + "";
+        dot = image.lastIndexOf('.');
+        _results.push(download(img.url, path.join(uri, i + image.substring(dot))));
       }
       return _results;
     };
@@ -78,7 +79,8 @@
       var name;
       name = title.toLowerCase();
       name = name.replace(/\s/g, '_');
-      return name = cmdString(name);
+      name = cmdString(name);
+      return name;
     };
 
     Manager.prototype.build = function(title, text, images) {
@@ -86,18 +88,27 @@
       project = this.structure(this.nameOf(title));
       this.downloadImages(project.images, images);
       fs.writeFileSync(project.text, text);
-      return this.speak(title, project.audio, project.text);
+      return this.speak(title, project.text, project.audio);
     };
 
-    Manager.prototype.run = function() {
-      var lang, _i, _len, _ref, _results;
-      _ref = this.langs;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        lang = _ref[_i];
-        _results.push(this.wiki.dailyArticle(lang, this.speak));
+    Manager.prototype.run = function(url) {
+      var lang, _i, _len, _ref, _results,
+        _this = this;
+      if (url) {
+        return this.wiki.scrape(url, function(title, text, images) {
+          return _this.build(title, text, images);
+        });
+      } else {
+        _ref = this.langs;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          lang = _ref[_i];
+          _results.push(this.wiki.dailyArticle(lang, function(title, text, images) {
+            return _this.build(title, text, images);
+          }));
+        }
+        return _results;
       }
-      return _results;
     };
 
     return Manager;
@@ -106,7 +117,11 @@
 
   m = new Manager();
 
-  m.run();
+  if (process.argv.length > 1) {
+    m.run(process.argv[2]);
+  } else {
+    m.run();
+  }
 
 }).call(this);
 

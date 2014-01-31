@@ -1,0 +1,30 @@
+<!-- Docs master nav -->
+<header class="navbar navbar-static-top" role="banner">
+<div class="container"> <h1>{{ project.name | str:'humanize' }}</h1> </div>
+</header>
+
+<audio autoplay>
+  <source ng-src="project.audio" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
+
+
+<!-- Page content of course! -->
+<main id="content" role="main">
+<div class="container" ng-if="project">
+  <div class="image">
+    <img ng-src="pathOf(img)" ng-show="!isSvg(img)" />
+  </div>
+  <div class="textwrapper">
+    <p class="text">
+    {{project.text}}
+    </p>
+  </div>
+</div>
+</main>
+
+
+<!-- Footer
+================================================== -->
+<footer class="bs-footer" role="contentinfo">
+</footer>

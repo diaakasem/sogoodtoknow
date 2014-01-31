@@ -30,13 +30,13 @@ class exports.Wikipedia
     words = _.map words, (value, key)->
       name: key
       rank: value
-    #console.log words
+    words = _.omit words, ['this', 'that', 'south', 'north', 'east', 'west',
+    'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here',
+    'against', 'their']
     words
 
   best: (dict, count=10)->
-    ranks = _.chain(dict).sortBy('rank').reverse().first(count).value()
-    console.log ranks
-    ranks
+    _.chain(dict).sortBy('rank').reverse().first(count).value()
 
   keywords: (text)->
     words = @analyze text
@@ -56,8 +56,10 @@ class exports.Wikipedia
         @scrape url, callback
 
   scrape: (url, callback) ->
+    console.log url
     jqueryify url, (err, window)=>
-      title = window.$('#firstHeading').find('span').text()
+      $ = window.$
+      title = $('#firstHeading').find('span').text()
       @getText window, (text)=>
         keywords = @keywords text
         @getImages window, (images)->
@@ -76,7 +78,9 @@ class exports.Wikipedia
 
   getText: (window, callback) ->
     $ = window.$
-    text = $('#mw-content-text>p').text()
+    #text = $('#mw-content-text>p').text()
+    $.fn.reverse = [].reverse
+    text = $('#mw-content-text p:empty').first().prevAll('p').reverse().text()
     # Removing [1] reference numbers
     text = text.replace /\[\d+\]/g, ''
     callback text
