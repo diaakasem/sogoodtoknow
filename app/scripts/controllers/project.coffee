@@ -1,6 +1,8 @@
 "use strict"
 controller = (root, scope, http, params, timeout) ->
 
+  scope.project = {}
+  scope.project.images = []
   scope.pathOf = (img)->
     "projects/#{scope.project.name}/images/#{img}"
 
@@ -25,11 +27,9 @@ controller = (root, scope, http, params, timeout) ->
     , 1000
 
     start = ->
-
-      root.audioElement.src = result.audio
+      root.audioElement.src = scope.project.audio
       root.audioElement.play()
-
-      root.audioElement.addEventListener "loadedmetadata", (event)=>
+      onAudio = (event)=>
         scope.duration = root.audioElement.duration
         time = Math.floor(scope.duration * 1000 /scope.project.images.length)
         scroll = $('.text')[0].scrollHeight / scope.project.images.length
@@ -48,10 +48,14 @@ controller = (root, scope, http, params, timeout) ->
             $('.text').animate({
               scrollTop: scrollTo - 60
             }, 1000)
+            scope.imageTimer = timeout changeImage, time
+        scope.imageTimer = timeout changeImage, time
 
-            timeout changeImage, time
+      root.audioElement.addEventListener "loadedmetadata", onAudio
+      root.$on '$routeChangeStart', ->
+        timeout.cancel(scope.imageTimer)
+        root.audioElement.removeEventListener "loadedmetadata", onAudio
 
-        timeout changeImage, time
     
     # To have a space to cut the movie when everything is loaded
     timeout start, 2000

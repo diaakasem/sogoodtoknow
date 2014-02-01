@@ -6,6 +6,8 @@
   controller = function(root, scope, http, params, timeout) {
     var promise,
       _this = this;
+    scope.project = {};
+    scope.project.images = [];
     scope.pathOf = function(img) {
       return "projects/" + scope.project.name + "/images/" + img;
     };
@@ -37,10 +39,11 @@
         });
       }, 1000);
       start = function() {
-        var _this = this;
-        root.audioElement.src = result.audio;
+        var onAudio,
+          _this = this;
+        root.audioElement.src = scope.project.audio;
         root.audioElement.play();
-        return root.audioElement.addEventListener("loadedmetadata", function(event) {
+        onAudio = function(event) {
           var changeImage, scroll, time;
           scope.duration = root.audioElement.duration;
           time = Math.floor(scope.duration * 1000 / scope.project.images.length);
@@ -66,10 +69,15 @@
               $('.text').animate({
                 scrollTop: scrollTo - 60
               }, 1000);
-              return timeout(changeImage, time);
+              return scope.imageTimer = timeout(changeImage, time);
             });
           };
-          return timeout(changeImage, time);
+          return scope.imageTimer = timeout(changeImage, time);
+        };
+        root.audioElement.addEventListener("loadedmetadata", onAudio);
+        return root.$on('$routeChangeStart', function() {
+          timeout.cancel(scope.imageTimer);
+          return root.audioElement.removeEventListener("loadedmetadata", onAudio);
         });
       };
       return timeout(start, 2000);
