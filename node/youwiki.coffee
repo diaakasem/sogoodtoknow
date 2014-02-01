@@ -14,6 +14,11 @@ cmdString = (text)->
   text = text.replace /\[/g, ' '
   text = text.replace /\]/g, ' '
 
+pad = (num, size=2) ->
+  s = num + ""
+  s = "0" + s  while s.length < size
+  s
+
 
 fs = require("fs")
 request = require("request")
@@ -52,9 +57,9 @@ class Manager
       return  if i >= images.length
       img = images[i++]
       dot = img.name.lastIndexOf('.')
-      download img.url, path.join(uri, i + img.name.substring(dot))
-      setTimeout downloadImage, 1000
-    setTimeout downloadImage, 1000
+      download img.url, path.join(uri, pad(i) + img.name.substring(dot))
+      setTimeout downloadImage, 5000
+    setTimeout downloadImage, 5000
 
   nameOf: (title)->
     name = title.toLowerCase()
