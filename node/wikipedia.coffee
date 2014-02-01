@@ -23,6 +23,8 @@ class exports.Wikipedia
   analyze: (text)->
     text = text.toLowerCase()
     textArr = text.split(' ')
+    textArr = _.map textArr, (word)->
+      word = word.replace /,/, ''
     words = {}
     _.each textArr, (word)->
       return  if word.length < 5
@@ -42,7 +44,7 @@ class exports.Wikipedia
     words = @analyze text
     ranks = @best words
     keywords = _.map(ranks, 'name').join(', ')
-    console.log keywords
+    console.log "Keywords: #{keywords}"
     keywords
 
   dailyArticle: (lang, callback) ->
@@ -56,12 +58,15 @@ class exports.Wikipedia
         @scrape url, callback
 
   scrape: (url, callback) ->
-    console.log url
+    console.log "Wikipedia: #{url}"
     jqueryify url, (err, window)=>
       $ = window.$
       title = $('#firstHeading').find('span').text()
+      console.log "Title: #{title}"
       @getText window, (text)=>
         keywords = @keywords text
+        description = _.first(title.split('. '), 3).join('. ')
+        console.log "Description: #{description}"
         @getImages window, (images)->
           callback title, text, images
 

@@ -3,7 +3,7 @@
   "use strict";
   var controller;
 
-  controller = function(scope, http, params, timeout) {
+  controller = function(root, scope, http, params, timeout) {
     var promise,
       _this = this;
     scope.pathOf = function(img) {
@@ -23,54 +23,60 @@
       url: "/project/" + params.name
     });
     return promise.success(function(result) {
-      var audioElement, i;
+      var i, imgPath, start;
       scope.project = result;
       scope.project.images = _.filter(scope.project.images, function(image) {
         return !scope.isSvg(image);
       });
       i = 0;
-      $('.image img').attr('src', scope.pathOf(scope.project.images[i++]));
-      audioElement = document.createElement('audio');
-      audioElement.src = result.audio;
-      audioElement.play();
-      return audioElement.addEventListener("loadedmetadata", function(event) {
-        var changeImage, scroll, time;
-        scope.duration = audioElement.duration;
-        time = Math.floor(scope.duration * 1000 / scope.project.images.length);
-        scroll = $('.text')[0].scrollHeight / scope.project.images.length;
-        fit($('.image img')[0], $('.image')[0], {
+      imgPath = scope.pathOf(scope.project.images[i++]);
+      $('.image img').attr('src', imgPath);
+      timeout(function() {
+        return fit($('.image img')[0], $('.image')[0], {
           vAlign: fit.CENTER
         });
-        changeImage = function() {
-          var _this = this;
-          if (i >= scope.project.images.length) {
-            return;
-          }
-          return $('.image img').fadeOut(500, function() {
-            var scrollTo;
-            $('.image img').attr('src', scope.pathOf(scope.project.images[i++]));
-            $('.image img').fadeIn(500);
-            timeout(function() {
-              return fit($('.image img')[0], $('.image')[0], {
-                vAlign: fit.CENTER
-              });
-            }, 80);
-            scrollTo = scroll * (i - 1);
-            console.log(scroll);
-            console.log(i);
-            console.log("Scroll to " + scrollTo);
-            $('.text').animate({
-              scrollTop: scrollTo - 60
-            }, 1000);
-            return timeout(changeImage, time);
-          });
-        };
-        return timeout(changeImage, time);
-      });
+      }, 1000);
+      start = function() {
+        var _this = this;
+        root.audioElement.src = result.audio;
+        root.audioElement.play();
+        return root.audioElement.addEventListener("loadedmetadata", function(event) {
+          var changeImage, scroll, time;
+          scope.duration = root.audioElement.duration;
+          time = Math.floor(scope.duration * 1000 / scope.project.images.length);
+          scroll = $('.text')[0].scrollHeight / scope.project.images.length;
+          changeImage = function() {
+            var _this = this;
+            if (i >= scope.project.images.length) {
+              return;
+            }
+            return $('.image img').fadeOut(500, function() {
+              var scrollTo;
+              $('.image img').attr('src', scope.pathOf(scope.project.images[i++]));
+              $('.image img').fadeIn(500);
+              timeout(function() {
+                return fit($('.image img')[0], $('.image')[0], {
+                  vAlign: fit.CENTER
+                });
+              }, 80);
+              scrollTo = scroll * (i - 1);
+              console.log(scroll);
+              console.log(i);
+              console.log("Scroll to " + scrollTo);
+              $('.text').animate({
+                scrollTop: scrollTo - 60
+              }, 1000);
+              return timeout(changeImage, time);
+            });
+          };
+          return timeout(changeImage, time);
+        });
+      };
+      return timeout(start, 2000);
     });
   };
 
-  angular.module("nodeExecuterApp").controller("ProjectCtrl", ['$scope', '$http', '$routeParams', '$timeout', controller]);
+  angular.module("nodeExecuterApp").controller("ProjectCtrl", ['$rootScope', '$scope', '$http', '$routeParams', '$timeout', controller]);
 
 }).call(this);
 

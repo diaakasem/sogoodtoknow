@@ -27,6 +27,9 @@
       var textArr, words;
       text = text.toLowerCase();
       textArr = text.split(' ');
+      textArr = _.map(textArr, function(word) {
+        return word = word.replace(/,/, '');
+      });
       words = {};
       _.each(textArr, function(word) {
         if (word.length < 5) {
@@ -56,7 +59,7 @@
       words = this.analyze(text);
       ranks = this.best(words);
       keywords = _.map(ranks, 'name').join(', ');
-      console.log(keywords);
+      console.log("Keywords: " + keywords);
       return keywords;
     };
 
@@ -80,14 +83,17 @@
 
     Wikipedia.prototype.scrape = function(url, callback) {
       var _this = this;
-      console.log(url);
+      console.log("Wikipedia: " + url);
       return jqueryify(url, function(err, window) {
         var $, title;
         $ = window.$;
         title = $('#firstHeading').find('span').text();
+        console.log("Title: " + title);
         return _this.getText(window, function(text) {
-          var keywords;
+          var description, keywords;
           keywords = _this.keywords(text);
+          description = _.first(title.split('. '), 3).join('. ');
+          console.log("Description: " + description);
           return _this.getImages(window, function(images) {
             return callback(title, text, images);
           });

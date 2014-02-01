@@ -56,7 +56,6 @@
     Manager.prototype.structure = function(title) {
       var p;
       p = this.pathOf(title);
-      console.log(p);
       mkdirp.sync(p);
       mkdirp.sync(path.join(p, 'images'));
       return {
@@ -70,7 +69,7 @@
     Manager.prototype.speak = function(title, textFile, audioFile) {
       return speaker.produce(audioFile, textFile, function(file) {
         fs.unlink(audioFile);
-        return console.log('Done : ' + file);
+        return console.log('Done');
       });
     };
 
@@ -85,9 +84,9 @@
         img = images[i++];
         dot = img.name.lastIndexOf('.');
         download(img.url, path.join(uri, pad(i) + img.name.substring(dot)));
-        return setTimeout(downloadImage, 5000);
+        return setTimeout(downloadImage, 10000);
       };
-      return setTimeout(downloadImage, 5000);
+      return setTimeout(downloadImage, 10000);
     };
 
     Manager.prototype.nameOf = function(title) {

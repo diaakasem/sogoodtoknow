@@ -38,7 +38,6 @@ class Manager
 
   structure: (title)->
     p = @pathOf title
-    console.log p
     mkdirp.sync p
     mkdirp.sync path.join p, 'images'
     root: p
@@ -49,7 +48,7 @@ class Manager
   speak: (title, textFile, audioFile)->
     speaker.produce audioFile, textFile, (file)->
       fs.unlink audioFile
-      console.log 'Done : ' + file
+      console.log 'Done' # + file
 
   downloadImages: (uri, images)->
     i = 0
@@ -58,8 +57,8 @@ class Manager
       img = images[i++]
       dot = img.name.lastIndexOf('.')
       download img.url, path.join(uri, pad(i) + img.name.substring(dot))
-      setTimeout downloadImage, 5000
-    setTimeout downloadImage, 5000
+      setTimeout downloadImage, 10000
+    setTimeout downloadImage, 10000
 
   nameOf: (title)->
     name = title.toLowerCase()

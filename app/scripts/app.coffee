@@ -9,3 +9,10 @@ app.config ($routeProvider) ->
     controller: 'ProjectCtrl'
   .otherwise redirectTo: "/"
 
+controller = (root)->
+  root.audioElement = document.createElement('audio')
+  root.$on '$routeChangeStart', ->
+    root.audioElement.pause()
+
+app.run ['$rootScope', controller]
+
