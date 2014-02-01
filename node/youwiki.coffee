@@ -8,11 +8,11 @@ speaker = new Say('en')
 cmdString = (text)->
   text = text.replace /"/g, ' '
   text = text.replace /'/g, ''
-  text = text.replace /\(/g, ' '
-  text = text.replace /\)/g, ' '
-  text = text.replace /\|/g, ' '
-  text = text.replace /\[/g, ' '
-  text = text.replace /\]/g, ' '
+  text = text.replace /\(/g, '\\('
+  text = text.replace /\)/g, '\\)'
+  text = text.replace /\|/g, '\\| '
+  text = text.replace /\[/g, '\\['
+  text = text.replace /\]/g, '\\]'
 
 pad = (num, size=2) ->
   s = num + ""
@@ -38,6 +38,7 @@ class Manager
 
   structure: (title)->
     p = @pathOf title
+    console.log p
     mkdirp.sync p
     mkdirp.sync path.join p, 'images'
     root: p
@@ -46,7 +47,6 @@ class Manager
     text: path.join p, 'text.txt'
 
   speak: (title, textFile, audioFile)->
-    title = cmdString(title)
     speaker.produce audioFile, textFile, (file)->
       fs.unlink audioFile
       console.log 'Done : ' + file
@@ -64,7 +64,7 @@ class Manager
   nameOf: (title)->
     name = title.toLowerCase()
     name = name.replace /\s/g, '_'
-    name = cmdString name
+    #name = cmdString name
     name
     
   build: (title, text, images)->

@@ -27,7 +27,7 @@ class exports.Say extends Executer
   toMp3: (file, callback)->
     cmd =
       name: 'convert'
-      command: "ffmpeg -i #{file} -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 #{file}.mp3"
+      command: "ffmpeg -i \"#{file}\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"#{file}\".mp3"
 
     @execute cmd, ->
       callback?(file + ".mp3")

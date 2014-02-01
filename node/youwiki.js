@@ -15,11 +15,11 @@
   cmdString = function(text) {
     text = text.replace(/"/g, ' ');
     text = text.replace(/'/g, '');
-    text = text.replace(/\(/g, ' ');
-    text = text.replace(/\)/g, ' ');
-    text = text.replace(/\|/g, ' ');
-    text = text.replace(/\[/g, ' ');
-    return text = text.replace(/\]/g, ' ');
+    text = text.replace(/\(/g, '\\(');
+    text = text.replace(/\)/g, '\\)');
+    text = text.replace(/\|/g, '\\| ');
+    text = text.replace(/\[/g, '\\[');
+    return text = text.replace(/\]/g, '\\]');
   };
 
   pad = function(num, size) {
@@ -56,6 +56,7 @@
     Manager.prototype.structure = function(title) {
       var p;
       p = this.pathOf(title);
+      console.log(p);
       mkdirp.sync(p);
       mkdirp.sync(path.join(p, 'images'));
       return {
@@ -67,7 +68,6 @@
     };
 
     Manager.prototype.speak = function(title, textFile, audioFile) {
-      title = cmdString(title);
       return speaker.produce(audioFile, textFile, function(file) {
         fs.unlink(audioFile);
         return console.log('Done : ' + file);
@@ -94,7 +94,6 @@
       var name;
       name = title.toLowerCase();
       name = name.replace(/\s/g, '_');
-      name = cmdString(name);
       return name;
     };
 

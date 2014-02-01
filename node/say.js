@@ -49,7 +49,7 @@
       var cmd;
       cmd = {
         name: 'convert',
-        command: "ffmpeg -i " + file + " -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 " + file + ".mp3"
+        command: "ffmpeg -i \"" + file + "\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"" + file + "\".mp3"
       };
       return this.execute(cmd, function() {
         return typeof callback === "function" ? callback(file + ".mp3") : void 0;
