@@ -10,7 +10,6 @@
       url: '/project/'
     });
     return promise.success(function(result) {
-      console.log(result);
       return $scope.articles = result;
     });
   };

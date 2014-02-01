@@ -1,9 +1,23 @@
 <div class="hero-unit">
-  <h1>Wikipedia</h1>
-  <p>You now have</p>
+
+  <h1>Dwikia</h1>
+  <div class="row" style="border-bottom: 1px solid black;">
+    <div class="col-lg-6">
+      <p>You now have</p>
+    </div>
+    <div class="col-lg-6 pull-right">
+      <span class="input-group">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-search"></i>
+        </span>
+        <input type="search" placeholder="Filter" class="form-control" ng-model="by_name">
+      </span>
+    </div>
+  </div>
+
   <ul>
-    <li ng-repeat="article in articles">
-    <a href="#/project/{{article}}">{{article}}</a>
+    <li ng-repeat="article in articles | filter:by_name">
+    <a href="#/project/{{article}}">{{article | str:'humanize'}}</a>
     </li>
   </ul>
 </div>
