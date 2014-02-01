@@ -25,11 +25,15 @@ controller = (scope, http, params, timeout) ->
       scope.duration = audioElement.duration
       time = Math.floor(scope.duration * 1000 /scope.project.images.length)
       scroll = $('.text')[0].scrollHeight / scope.project.images.length
+      fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
       changeImage = ->
         return  if i >= scope.project.images.length
         $('.image img').fadeOut 500, =>
           $('.image img').attr 'src', scope.pathOf(scope.project.images[i++])
           $('.image img').fadeIn 500
+          timeout ->
+            fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
+          , 80
           scrollTo = scroll * (i - 1)
           console.log scroll
           console.log i
