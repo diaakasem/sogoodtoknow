@@ -85,8 +85,14 @@ class exports.Wikipedia
     $ = window.$
     #text = $('#mw-content-text>p').text()
     $.fn.reverse = [].reverse
-    text = $('#mw-content-text p:empty').first().prevAll('p').reverse().text()
+    all = $('#mw-content-text p:empty').first().prevAll('p, ul')
+    all.find('li').text (i, text)->
+      if text[-1..] isnt '.'
+        text = text + ". "
+      text
+    text = all.reverse().text()
     # Removing [1] reference numbers
     text = text.replace /\[\d+\]/g, ''
+    text = text.replace /\.([A-Z])/g, '. $1'
     callback text
 

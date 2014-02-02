@@ -121,11 +121,19 @@
     };
 
     Wikipedia.prototype.getText = function(window, callback) {
-      var $, text;
+      var $, all, text;
       $ = window.$;
       $.fn.reverse = [].reverse;
-      text = $('#mw-content-text p:empty').first().prevAll('p').reverse().text();
+      all = $('#mw-content-text p:empty').first().prevAll('p, ul');
+      all.find('li').text(function(i, text) {
+        if (text.slice(-1) !== '.') {
+          text = text + ". ";
+        }
+        return text;
+      });
+      text = all.reverse().text();
       text = text.replace(/\[\d+\]/g, '');
+      text = text.replace(/\.([A-Z])/g, '. $1');
       return callback(text);
     };
 

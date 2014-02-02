@@ -47,6 +47,7 @@ ul.projects a{
     width: 500px;
     margin-left: 20px;
     padding: 20px;
+    padding-right: 5px;
     border-radius: 20px;
     background: slategrey;
     height: 542px;
@@ -59,6 +60,7 @@ ul.projects a{
     font-family: fantasy;
     overflow-y: auto;
     height: 500px;
+    padding-right: 15px;
 }
 .image{
     text-align: center;
