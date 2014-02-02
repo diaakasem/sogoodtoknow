@@ -86,6 +86,7 @@ class exports.Wikipedia
     #text = $('#mw-content-text>p').text()
     $.fn.reverse = [].reverse
     all = $('#mw-content-text p:empty').first().prevAll('p, ul')
+    all = all.filter(":not(:contains('Coordinates'))")
     all.find('li').text (i, text)->
       if text[-1..] isnt '.'
         text = text + ". "

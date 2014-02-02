@@ -2,6 +2,9 @@
 {Say} = require './say'
 path = require 'path'
 mkdirp = require 'mkdirp'
+_ = require 'lodash'
+gm = require 'gm'
+im = require 'imagemagick'
 
 speaker = new Say('en')
 
@@ -22,8 +25,10 @@ pad = (num, size=2) ->
 
 fs = require("fs")
 request = require("request")
-download = (uri, filename) ->
-  request(uri).pipe fs.createWriteStream(filename)
+download = (uri, filename, callback) ->
+  r = request(uri)
+  r.pipe fs.createWriteStream(filename)
+  r.on 'end', callback
 
 
 class Manager
@@ -51,20 +56,31 @@ class Manager
       console.log 'Done' # + file
 
   downloadImages: (uri, images)->
+    images = _.filter images, (image)->
+      image.name.indexOf('svg') < 0
     i = 0
     downloadImage = ->
       return  if i >= images.length
       img = images[i++]
       dot = img.name.lastIndexOf('.')
-      download img.url, path.join(uri, pad(i) + img.name.substring(dot))
-      setTimeout downloadImage, 10000
-    setTimeout downloadImage, 10000
+      padded = pad(i)
+      ext = img.name.substring(dot)
+      out = path.join(uri, padded + ext)
+      download img.url, out, ->
+        im.resize
+          srcPath: out
+          dstPath: path.join(uri, padded + '_resized' + ext)
+          width: 500
+          height: 500
+        , (err, stdout, stderr)->
+          throw err  if err
+          fs.unlink out
+          downloadImage()
+    downloadImage()
 
   nameOf: (title)->
     name = title.toLowerCase()
-    name = name.replace /\s/g, '_'
-    #name = cmdString name
-    name
+    name.replace /\s/g, '_'
     
   build: (title, text, images)->
     project = @structure(@nameOf(title))

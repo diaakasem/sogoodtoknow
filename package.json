@@ -2,7 +2,12 @@
   "name": "node-executer",
   "version": "0.0.0",
   "dependencies": {
-    "ejs": "~0.8.5"
+    "ejs": "~0.8.5",
+    "imagemagick": "~0.1.3",
+    "underscore.string": "~2.3.3",
+    "lodash": "~2.4.1",
+    "nodejs-fastload": "0.0.3",
+    "gm": "~1.14.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

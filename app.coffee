@@ -9,6 +9,7 @@ app = express()
 app.set('view engine', 'ejs')
 app.use '/', express.static(__dirname + '/app')
 app.engine('html', require('ejs').renderFile)
+app.use(require('nodejs-fastload').loader('/l'))
 
 app.get '/wikipedia/build/:name', (req, res)->
   res.json({ hello: 'world' })

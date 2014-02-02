@@ -125,6 +125,7 @@
       $ = window.$;
       $.fn.reverse = [].reverse;
       all = $('#mw-content-text p:empty').first().prevAll('p, ul');
+      all = all.filter(":not(:contains('Coordinates'))");
       all.find('li').text(function(i, text) {
         if (text.slice(-1) !== '.') {
           text = text + ". ";

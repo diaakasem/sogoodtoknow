@@ -20,6 +20,8 @@
 
   app.engine('html', require('ejs').renderFile);
 
+  app.use(require('nodejs-fastload').loader('/l'));
+
   app.get('/wikipedia/build/:name', function(req, res) {
     return res.json({
       hello: 'world'
@@ -38,7 +40,7 @@
     project = path.join(projectsPath, name);
     textFile = path.join(project, 'text.txt');
     imagesDir = path.join(project, 'images');
-    audio = path.join('projects', name, 'audio.aiff');
+    audio = path.join('projects', name, 'audio.aiff.mp3');
     text = fs.readFileSync(textFile) + "";
     images = fs.readdirSync(imagesDir);
     return res.json({
