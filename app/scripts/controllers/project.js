@@ -25,7 +25,7 @@
       url: "/project/" + params.name
     });
     return promise.success(function(result) {
-      var i, imgPath, start;
+      var i, imgPath;
       scope.project = result;
       scope.project.images = _.filter(scope.project.images, function(image) {
         return !scope.isSvg(image);
@@ -38,7 +38,7 @@
           vAlign: fit.CENTER
         });
       }, 1000);
-      start = function() {
+      return scope.start = function() {
         var onAudio,
           _this = this;
         root.audioElement.src = scope.project.audio;
@@ -80,7 +80,6 @@
           return root.audioElement.removeEventListener("loadedmetadata", onAudio);
         });
       };
-      return timeout(start, 2000);
     });
   };
 

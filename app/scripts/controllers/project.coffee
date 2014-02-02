@@ -26,7 +26,7 @@ controller = (root, scope, http, params, timeout) ->
       fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
     , 1000
 
-    start = ->
+    scope.start = ->
       root.audioElement.src = scope.project.audio
       root.audioElement.play()
       onAudio = (event)=>
@@ -58,7 +58,7 @@ controller = (root, scope, http, params, timeout) ->
 
     
     # To have a space to cut the movie when everything is loaded
-    timeout start, 2000
+    #timeout start, 2000
 
 
 angular.module("nodeExecuterApp")

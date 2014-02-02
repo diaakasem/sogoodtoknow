@@ -3,7 +3,7 @@
 class exports.Say extends Executer
 
   voices:
-    en: ['samantha', 'tom', 'alex', 'susan', 'ava', 'allison']
+    en: ['samantha', 'tom', 'susan', 'ava', 'allison']
 
   constructor: (@defaultlang)->
     super()

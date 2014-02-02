@@ -92,7 +92,7 @@
         return _this.getText(window, function(text) {
           var description, keywords;
           keywords = _this.keywords(text);
-          description = _.first(title.split('. '), 3).join('. ');
+          description = _.first(text.split('. '), 3).join('. ');
           console.log("Description: " + description);
           return _this.getImages(window, function(images) {
             return callback(title, text, images);

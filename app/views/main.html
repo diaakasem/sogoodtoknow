@@ -1,4 +1,4 @@
-<div class="hero-unit">
+<div class="hero-unit container">
 
   <h1>Dwikia</h1>
   <div class="row" style="border-bottom: 1px solid black;">
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <ul>
+  <ul class="projects">
     <li ng-repeat="article in articles | filter:by_name">
     <a href="#/project/{{article}}">{{article | str:'humanize'}}</a>
     </li>

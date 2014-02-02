@@ -65,7 +65,7 @@ class exports.Wikipedia
       console.log "Title: #{title}"
       @getText window, (text)=>
         keywords = @keywords text
-        description = _.first(title.split('. '), 3).join('. ')
+        description = _.first(text.split('. '), 3).join('. ')
         console.log "Description: #{description}"
         @getImages window, (images)->
           callback title, text, images

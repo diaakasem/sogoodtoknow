@@ -17,15 +17,30 @@ h1 {
     font-size: 18px;
     font-weight: 200;
     line-height: 30px;
-    background-color: #eee;
+    background-color: rgba(100,100,100,0.6);
     border-radius: 6px;
     padding: 60px;
+    color: ivory;
+    margin-bottom: 100px;
 }
-
 .hero-unit h1 {
+    color: rgb(240, 248, 214);
     font-size: 60px;
     line-height: 1;
     letter-spacing: -1px;
+}
+ul.projects{
+    height: 300px;
+    overflow-y: auto;
+}
+
+ul.projects li{
+    display: inline-block;
+    min-width: 320px;
+    margin: 5px;
+}
+ul.projects a{
+    color: ivory;
 }
 .textwrapper {
     float: left;
@@ -59,4 +74,11 @@ h1 {
     max-height: 500px;
     max-width: 500px;
     opacity: 1;
+}
+footer{
+    margin-top: 20px;
+    opacity: 0.5;
+    background-color: #383838;
+    border-top: 1px solid #383838;
+    height: 55px;
 }
