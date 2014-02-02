@@ -26,13 +26,13 @@ controller = (root, scope, http, params, timeout) ->
       fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
     , 1000
 
-    scope.start = ->
+    scope.start = _.once ->
       root.audioElement.src = scope.project.audio
       root.audioElement.play()
       onAudio = (event)=>
         scope.duration = root.audioElement.duration
         time = Math.floor(scope.duration * 1000 /scope.project.images.length)
-        scroll = $('.text')[0].scrollHeight / scope.project.images.length
+        scroll = $('.text')[0].scrollHeight / (scope.project.images.length + 1)
         changeImage = ->
           return  if i >= scope.project.images.length
           $('.image img').fadeOut 500, =>

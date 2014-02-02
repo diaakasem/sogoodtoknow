@@ -38,7 +38,7 @@
           vAlign: fit.CENTER
         });
       }, 1000);
-      return scope.start = function() {
+      return scope.start = _.once(function() {
         var onAudio,
           _this = this;
         root.audioElement.src = scope.project.audio;
@@ -47,7 +47,7 @@
           var changeImage, scroll, time;
           scope.duration = root.audioElement.duration;
           time = Math.floor(scope.duration * 1000 / scope.project.images.length);
-          scroll = $('.text')[0].scrollHeight / scope.project.images.length;
+          scroll = $('.text')[0].scrollHeight / (scope.project.images.length + 1);
           changeImage = function() {
             var _this = this;
             if (i >= scope.project.images.length) {
@@ -79,7 +79,7 @@
           timeout.cancel(scope.imageTimer);
           return root.audioElement.removeEventListener("loadedmetadata", onAudio);
         });
-      };
+      });
     });
   };
 
