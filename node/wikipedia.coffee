@@ -24,7 +24,7 @@ class exports.Wikipedia
     text = text.toLowerCase()
     textArr = text.split(' ')
     textArr = _.map textArr, (word)->
-      word = word.replace /,/, ''
+      word = word.replace /[,\.]/, ''
     words = {}
     _.each textArr, (word)->
       return  if word.length < 5

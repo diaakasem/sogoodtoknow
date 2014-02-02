@@ -28,7 +28,7 @@
       text = text.toLowerCase();
       textArr = text.split(' ');
       textArr = _.map(textArr, function(word) {
-        return word = word.replace(/,/, '');
+        return word = word.replace(/[,\.]/, '');
       });
       words = {};
       _.each(textArr, function(word) {
