@@ -44,31 +44,35 @@
         root.audioElement.src = scope.project.audio;
         root.audioElement.play();
         onAudio = function(event) {
-          var changeImage, scroll, time;
+          var changeImage, imgCount, scroll, scrollFn, splits, time;
           scope.duration = root.audioElement.duration;
           time = Math.floor(scope.duration * 1000 / scope.project.images.length);
-          scroll = $('.text')[0].scrollHeight / (scope.project.images.length + 1);
+          imgCount = scope.project.images.length;
+          splits = imgCount < 5 ? imgCount : imgCount + 1;
+          scroll = $('.text')[0].scrollHeight / splits;
+          scrollFn = function() {
+            var scrollTo;
+            scrollTo = scroll * i;
+            return $('.text').animate({
+              scrollTop: scrollTo
+            }, 1000);
+          };
           changeImage = function() {
             var _this = this;
-            if (i >= scope.project.images.length) {
+            if (i >= imgCount) {
+              scrollFn();
               return;
             }
             return $('.image img').fadeOut(500, function() {
-              var scrollTo;
-              $('.image img').attr('src', scope.pathOf(scope.project.images[i++]));
+              $('.image img').attr('src', scope.pathOf(scope.project.images[i]));
               $('.image img').fadeIn(500);
               timeout(function() {
                 return fit($('.image img')[0], $('.image')[0], {
                   vAlign: fit.CENTER
                 });
               }, 80);
-              scrollTo = scroll * (i - 1);
-              console.log(scroll);
-              console.log(i);
-              console.log("Scroll to " + scrollTo);
-              $('.text').animate({
-                scrollTop: scrollTo - 60
-              }, 1000);
+              scrollFn();
+              i++;
               return scope.imageTimer = timeout(changeImage, time);
             });
           };

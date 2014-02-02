@@ -32,22 +32,27 @@ controller = (root, scope, http, params, timeout) ->
       onAudio = (event)=>
         scope.duration = root.audioElement.duration
         time = Math.floor(scope.duration * 1000 /scope.project.images.length)
-        scroll = $('.text')[0].scrollHeight / (scope.project.images.length + 1)
+        imgCount = scope.project.images.length
+        splits = if imgCount < 5 then imgCount else imgCount + 1
+        scroll = $('.text')[0].scrollHeight / splits
+
+        scrollFn = ->
+          scrollTo = scroll * i
+          $('.text').animate({ scrollTop: scrollTo }, 1000)
+
         changeImage = ->
-          return  if i >= scope.project.images.length
+          if i >= imgCount
+            scrollFn()
+            return
+
           $('.image img').fadeOut 500, =>
-            $('.image img').attr 'src', scope.pathOf(scope.project.images[i++])
+            $('.image img').attr 'src', scope.pathOf(scope.project.images[i])
             $('.image img').fadeIn 500
             timeout ->
               fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
             , 80
-            scrollTo = scroll * (i - 1)
-            console.log scroll
-            console.log i
-            console.log "Scroll to #{scrollTo}"
-            $('.text').animate({
-              scrollTop: scrollTo - 60
-            }, 1000)
+            scrollFn()
+            i++
             scope.imageTimer = timeout changeImage, time
         scope.imageTimer = timeout changeImage, time
 
