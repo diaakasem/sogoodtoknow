@@ -64,13 +64,12 @@ ul.projects a{
 }
 .image{
     text-align: center;
-    background: wheat;
+    background-color: rgba(220,210,200,0.5);
     padding: 20px;
     border-radius: 20px;
     height: 542px;
     width: 542px;
     float: left;
-    opacity: 0.8;
 }
 .image img{
     max-height: 500px;

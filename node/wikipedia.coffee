@@ -101,9 +101,16 @@ class exports.Wikipedia
     $.fn.reverse = [].reverse
     emptyP = $('#mw-content-text p:empty')
     if emptyP.length > 0
-      all = emptyP.first().prevAll('p, ul').reverse()
+      all = emptyP.first().prevAll('p, ul, dl').reverse()
     else
-      all = $('#mw-content-text>p')
+      secondParagraph = $('#mw-content-text h2')
+
+      # When there is no empty p and only h2
+      if secondParagraph.length > 0
+        all = secondParagraph.first().prevAll('p, ul, dl').reverse()
+      else
+        all = $('#mw-content-text>p')
+
     all = all.filter(":not(:contains('Coordinates'))")
     all.find('li').text (i, text)->
       if text[-1..] isnt '.'
