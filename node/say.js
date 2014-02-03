@@ -12,7 +12,7 @@
     __extends(Say, _super);
 
     Say.prototype.voices = {
-      en: ['samantha', 'tom', 'ava']
+      en: ['tom', 'ava']
     };
 
     function Say(defaultlang) {
