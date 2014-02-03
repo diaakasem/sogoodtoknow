@@ -106,7 +106,7 @@
             height: 500
           }, function(err, stdout, stderr) {
             if (err) {
-              throw err;
+              fs.unlink(path.join(uri, padded + '_resized' + ext));
             }
             fs.unlink(out);
             return downloadImage();
@@ -130,21 +130,26 @@
       return this.speak(title, project.text, project.audio);
     };
 
+    Manager.prototype.wikipedia = function() {
+      return this.wiki;
+    };
+
     Manager.prototype.run = function(url) {
-      var lang, _i, _len, _ref, _results,
+      var callback, lang, _i, _len, _ref, _results,
         _this = this;
-      if (url) {
-        return this.wiki.scrape(url, function(title, text, images) {
-          return _this.build(title, text, images);
-        });
+      callback = function(title, text, images) {
+        return _this.build(title, text, images);
+      };
+      if (url && url === 'random') {
+        return this.wiki.randomEn(callback);
+      } else if (url && url !== 'random') {
+        return this.wiki.scrape(url, callback);
       } else {
         _ref = this.langs;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           lang = _ref[_i];
-          _results.push(this.wiki.dailyArticle(lang, function(title, text, images) {
-            return _this.build(title, text, images);
-          }));
+          _results.push(this.wiki.dailyArticle(lang, callback));
         }
         return _results;
       }

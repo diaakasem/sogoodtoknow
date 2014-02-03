@@ -81,6 +81,29 @@
       });
     };
 
+    Wikipedia.prototype.randomEn = function(callback) {
+      var base_url,
+        _this = this;
+      base_url = "http://en.wikipedia.org/wiki/Special:Random";
+      console.log(base_url);
+      return jqueryify(base_url, function(err, window) {
+        var $, link;
+        if (err) {
+          throw err;
+        }
+        $ = window.$;
+        link = window.location.href;
+        console.log(link);
+        return _this.getImages(window, function(images) {
+          if (images.length > 2) {
+            return _this.scrape(link, callback);
+          } else {
+            return _this.randomEn(callback);
+          }
+        });
+      });
+    };
+
     Wikipedia.prototype.scrape = function(url, callback) {
       var _this = this;
       console.log("Wikipedia: " + url);
@@ -121,10 +144,15 @@
     };
 
     Wikipedia.prototype.getText = function(window, callback) {
-      var $, all, text;
+      var $, all, emptyP, text;
       $ = window.$;
       $.fn.reverse = [].reverse;
-      all = $('#mw-content-text p:empty').first().prevAll('p, ul');
+      emptyP = $('#mw-content-text p:empty');
+      if (emptyP.length > 0) {
+        all = emptyP.first().prevAll('p, ul').reverse();
+      } else {
+        all = $('#mw-content-text>p');
+      }
       all = all.filter(":not(:contains('Coordinates'))");
       all.find('li').text(function(i, text) {
         if (text.slice(-1) !== '.') {
@@ -132,9 +160,10 @@
         }
         return text;
       });
-      text = all.reverse().text();
+      text = all.text();
       text = text.replace(/\[\d+\]/g, '');
       text = text.replace(/\.([A-Z])/g, '. $1');
+      text = text.replace('[citation needed]', '');
       return callback(text);
     };
 

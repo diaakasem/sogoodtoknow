@@ -1,9 +1,10 @@
 {Executer} = require './executer'
+fs = require 'fs'
 
 class exports.Say extends Executer
 
   voices:
-    en: ['samantha', 'tom', 'ava', 'allison']
+    en: ['samantha', 'tom', 'ava']
 
   constructor: (@defaultlang)->
     super()
@@ -25,12 +26,13 @@ class exports.Say extends Executer
     @execute(cmd, callback)
 
   toMp3: (file, callback)->
-    cmd =
-      name: 'convert'
-      command: "ffmpeg -i \"#{file}\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"#{file}\".mp3"
+    fs.unlink "#{file}.mp3", =>
+      cmd =
+        name: 'convert'
+        command: "ffmpeg -i \"#{file}\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"#{file}\".mp3"
 
-    @execute cmd, ->
-      callback?(file + ".mp3")
+      @execute cmd, ->
+        callback?(file + ".mp3")
 
   produce: (audioFile, textFile, callback)->
     v = @voice()

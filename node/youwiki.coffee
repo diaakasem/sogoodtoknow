@@ -73,7 +73,8 @@ class Manager
           width: 500
           height: 500
         , (err, stdout, stderr)->
-          throw err  if err
+          if err
+            fs.unlink path.join(uri, padded + '_resized' + ext)
           fs.unlink out
           downloadImage()
     downloadImage()
@@ -88,14 +89,19 @@ class Manager
     fs.writeFileSync project.text, text
     @speak title, project.text, project.audio
 
+  wikipedia: ->
+    @wiki
   run: (url)->
-    if url
-      @wiki.scrape url, (title, text, images)=>
-        @build(title, text, images)
+    callback = (title, text, images)=>
+      @build(title, text, images)
+
+    if url and url is 'random'
+      @wiki.randomEn callback
+    else if url and url isnt 'random'
+      @wiki.scrape url, callback
     else
       for lang in @langs
-        @wiki.dailyArticle lang, (title, text, images)=>
-          @build(title, text, images)
+        @wiki.dailyArticle lang, callback
 
 m = new Manager()
 if process.argv.length > 1

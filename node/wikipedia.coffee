@@ -57,6 +57,20 @@ class exports.Wikipedia
         url = base_url + link.attr("href")
         @scrape url, callback
 
+  randomEn: (callback) ->
+    base_url = "http://en.wikipedia.org/wiki/Special:Random"
+    console.log base_url
+    jqueryify base_url, (err, window) =>
+      throw err  if err
+      $ = window.$
+      link = window.location.href
+      console.log link
+      @getImages window, (images)=>
+        if images.length > 2
+          @scrape link, callback
+        else
+          @randomEn callback
+
   scrape: (url, callback) ->
     console.log "Wikipedia: #{url}"
     jqueryify url, (err, window)=>
@@ -85,15 +99,20 @@ class exports.Wikipedia
     $ = window.$
     #text = $('#mw-content-text>p').text()
     $.fn.reverse = [].reverse
-    all = $('#mw-content-text p:empty').first().prevAll('p, ul')
+    emptyP = $('#mw-content-text p:empty')
+    if emptyP.length > 0
+      all = emptyP.first().prevAll('p, ul').reverse()
+    else
+      all = $('#mw-content-text>p')
     all = all.filter(":not(:contains('Coordinates'))")
     all.find('li').text (i, text)->
       if text[-1..] isnt '.'
         text = text + ". "
       text
-    text = all.reverse().text()
+    text = all.text()
     # Removing [1] reference numbers
     text = text.replace /\[\d+\]/g, ''
     text = text.replace /\.([A-Z])/g, '. $1'
+    text = text.replace '[citation needed]', ''
     callback text
 
