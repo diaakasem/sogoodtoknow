@@ -1,0 +1,12 @@
+html
+  body
+    | &quot;use strict&quot;
+    | controller &equals; &lpar;root&comma; scope&comma; http&comma; params&comma; timeout&rpar; -&gt;
+    | scope&period;project &equals; &lcub;&rcub;
+    | promise &equals; http
+    | method&colon; &apos;get&apos;
+    | url&colon; &quot;&sol;project&sol;&num;&lcub;params&period;name&rcub;&quot;
+    | promise&period;success &lpar;result&rpar;&equals;&gt;
+    | scope&period;project &equals; result
+    | angular&period;module&lpar;&quot;nodeExecuterApp&quot;&rpar;
+    | &period;controller &apos;UploaddataCtrl&apos;&comma; &lsqb;&apos;&dollar;rootScope&apos;&comma; &apos;&dollar;scope&apos;&comma; &apos;&dollar;http&apos;&comma; &apos;&dollar;routeParams&apos;&comma; &apos;&dollar;timeout&apos;&comma; controller&rsqb;

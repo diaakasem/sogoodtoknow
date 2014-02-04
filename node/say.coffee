@@ -12,9 +12,7 @@ class exports.Say extends Executer
   voice: (lang=@defaultlang)->
     arr = if lang then @voices[lang] else []
     return null  unless arr.length
-    res = arr[Math.floor(Math.random() * arr.length)]
-    console.log "Speaking #{res} voice."
-    res
+    arr[Math.floor(Math.random() * arr.length)]
 
   say: (something, callback)->
     v = @voice()
@@ -25,17 +23,10 @@ class exports.Say extends Executer
       cmd.command += " -v #{v}"
     @execute(cmd, callback)
 
-  toMp3: (file, callback)->
-    fs.unlink "#{file}.mp3", =>
-      cmd =
-        name: 'convert'
-        command: "ffmpeg -i \"#{file}\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"#{file}\".mp3"
-
-      @execute cmd, ->
-        callback?(file + ".mp3")
-
   produce: (audioFile, textFile, callback)->
+    audio = {}
     v = @voice()
+    audio.voice = v
     cmd =
       name: 'say'
       command: "say -o \"#{audioFile}\" -f \"#{textFile}\" "
@@ -44,4 +35,14 @@ class exports.Say extends Executer
 
     @execute cmd, =>
       @toMp3 audioFile, (file)=>
-        callback?(file)
+        audio.file = file
+        callback?(audio)
+
+  toMp3: (file, callback)->
+    fs.unlink "#{file}.mp3", =>
+      cmd =
+        name: 'convert'
+        command: "ffmpeg -i \"#{file}\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"#{file}\".mp3"
+
+      @execute cmd, ->
+        callback?(file + ".mp3")

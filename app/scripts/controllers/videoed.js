@@ -9,20 +9,19 @@
       method: 'post',
       url: '/project/',
       data: {
-        status: 'created'
+        status: 'videoed'
       }
     });
     scope.by_name = '';
     return promise.success(function(result) {
-      console.log(result);
       return scope.articles = result;
     });
   };
 
-  angular.module("nodeExecuterApp").controller("MainCtrl", ['$scope', '$http', '$location', controller]);
+  angular.module("nodeExecuterApp").controller('VideoedCtrl', ['$scope', '$http', '$location', controller]);
 
 }).call(this);
 
 /*
-//@ sourceMappingURL=main.map
+//@ sourceMappingURL=videoed.map
 */

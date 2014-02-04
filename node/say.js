@@ -21,7 +21,7 @@
     }
 
     Say.prototype.voice = function(lang) {
-      var arr, res;
+      var arr;
       if (lang == null) {
         lang = this.defaultlang;
       }
@@ -29,9 +29,7 @@
       if (!arr.length) {
         return null;
       }
-      res = arr[Math.floor(Math.random() * arr.length)];
-      console.log("Speaking " + res + " voice.");
-      return res;
+      return arr[Math.floor(Math.random() * arr.length)];
     };
 
     Say.prototype.say = function(something, callback) {
@@ -47,6 +45,27 @@
       return this.execute(cmd, callback);
     };
 
+    Say.prototype.produce = function(audioFile, textFile, callback) {
+      var audio, cmd, v,
+        _this = this;
+      audio = {};
+      v = this.voice();
+      audio.voice = v;
+      cmd = {
+        name: 'say',
+        command: "say -o \"" + audioFile + "\" -f \"" + textFile + "\" "
+      };
+      if (v) {
+        cmd.command += "-v " + v + " ";
+      }
+      return this.execute(cmd, function() {
+        return _this.toMp3(audioFile, function(file) {
+          audio.file = file;
+          return typeof callback === "function" ? callback(audio) : void 0;
+        });
+      });
+    };
+
     Say.prototype.toMp3 = function(file, callback) {
       var _this = this;
       return fs.unlink("" + file + ".mp3", function() {
@@ -57,24 +76,6 @@
         };
         return _this.execute(cmd, function() {
           return typeof callback === "function" ? callback(file + ".mp3") : void 0;
-        });
-      });
-    };
-
-    Say.prototype.produce = function(audioFile, textFile, callback) {
-      var cmd, v,
-        _this = this;
-      v = this.voice();
-      cmd = {
-        name: 'say',
-        command: "say -o \"" + audioFile + "\" -f \"" + textFile + "\" "
-      };
-      if (v) {
-        cmd.command += "-v " + v + " ";
-      }
-      return this.execute(cmd, function() {
-        return _this.toMp3(audioFile, function(file) {
-          return typeof callback === "function" ? callback(file) : void 0;
         });
       });
     };

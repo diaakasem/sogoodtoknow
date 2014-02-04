@@ -1,0 +1,37 @@
+<div class="hero-unit container">
+
+  <h1>Dwikia</h1>
+
+  <tabnav selected='new'></tabnav>
+
+  <div class="row" style="margin: 100px auto;">
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-6">
+        <span class="input-group input-group-lg">
+          <input type="text" placeholder="Wikipedia URL" class="form-control"
+          ng-model="wikipedia">
+          <span class="input-group-btn">
+            <button class="btn btn-success" type="button" ng-click="process()">
+              <i class="glyphicon glyphicon-leaf"></i>
+              Process
+            </button>
+          </span>
+        </span>
+      </div>
+    </div>
+    <div style="text-align: center">
+      <div style="margin: 20px; display: inline-block;">
+        <button class="btn btn-lg btn-warning" ng-click="random()">
+          <i class="glyphicon glyphicon glyphicon-random"></i>
+          Random
+        </button>
+      </div>
+      <div style="margin: 20px; display: inline-block;">
+        <button class="btn btn-lg btn-warning" ng-click="today()">
+          <i class="glyphicon glyphicon glyphicon-calendar"></i>
+          Today
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

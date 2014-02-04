@@ -3,7 +3,7 @@
   "use strict";
   var controller;
 
-  controller = function(root, scope, http, params, timeout) {
+  controller = function(root, scope, http, params, timeout, location) {
     var promise,
       _this = this;
     scope.project = {};
@@ -17,8 +17,38 @@
         return false;
       }
       name = name.toLowerCase();
-      res = _.str.endsWith(name, 'svg');
+      res = _.str.endsWith(name, 'svg') || _.str.endsWith(name, 'gif');
       return res;
+    };
+    scope.remove = function() {
+      var h;
+      h = http({
+        method: 'delete',
+        url: "/project/" + scope.project.name
+      });
+      h.success(function(res) {
+        console.log(res);
+        return location.path('/');
+      });
+      return h.error(function(err) {
+        return console.log(err);
+      });
+    };
+    scope.markVideoed = function() {
+      var h;
+      h = http({
+        method: 'post',
+        url: "/project/" + scope.project.name,
+        data: {
+          status: 'videoed'
+        }
+      });
+      h.success(function(res) {
+        return console.log(res);
+      });
+      return h.error(function(err) {
+        return console.log(err);
+      });
     };
     promise = http({
       method: 'get',
@@ -28,10 +58,10 @@
       var i, imgPath;
       scope.project = result;
       scope.project.images = _.filter(scope.project.images, function(image) {
-        return !scope.isSvg(image);
+        return !scope.isSvg(image.name);
       });
       i = 0;
-      imgPath = scope.pathOf(scope.project.images[i++]);
+      imgPath = scope.pathOf(scope.project.images[i++].name);
       $('.image img').attr('src', imgPath);
       timeout(function() {
         return fit($('.image img')[0], $('.image')[0], {
@@ -41,7 +71,7 @@
       return scope.start = _.once(function() {
         var onAudio,
           _this = this;
-        root.audioElement.src = scope.project.audio;
+        root.audioElement.src = "projects/" + scope.project.name + "/audio.aiff.mp3";
         root.audioElement.play();
         onAudio = function(event) {
           var changeImage, imgCount, scroll, scrollFn, splits, time;
@@ -61,10 +91,11 @@
             var _this = this;
             if (i >= imgCount) {
               scrollFn();
+              scope.markVideoed();
               return;
             }
             return $('.image img').fadeOut(500, function() {
-              $('.image img').attr('src', scope.pathOf(scope.project.images[i]));
+              $('.image img').attr('src', scope.pathOf(scope.project.images[i].name));
               $('.image img').fadeIn(500);
               timeout(function() {
                 return fit($('.image img')[0], $('.image')[0], {
@@ -87,7 +118,7 @@
     });
   };
 
-  angular.module("nodeExecuterApp").controller("ProjectCtrl", ['$rootScope', '$scope', '$http', '$routeParams', '$timeout', controller]);
+  angular.module("nodeExecuterApp").controller("ProjectCtrl", ['$rootScope', '$scope', '$http', '$routeParams', '$timeout', '$location', controller]);
 
 }).call(this);
 

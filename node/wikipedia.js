@@ -28,7 +28,7 @@
       text = text.toLowerCase();
       textArr = text.split(' ');
       textArr = _.map(textArr, function(word) {
-        return word = word.replace(/[,\.]/, '');
+        return word = word.replace(/[,\.\)\(]/, '');
       });
       words = {};
       _.each(textArr, function(word) {
@@ -43,7 +43,7 @@
           rank: value
         };
       });
-      words = _.omit(words, ['this', 'that', 'south', 'north', 'east', 'west', 'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here', 'against', 'their', 'other', 'where']);
+      words = _.omit(words, ['this', 'that', 'south', 'north', 'east', 'west', 'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here', 'against', 'their', 'other', 'where', 'which']);
       return words;
     };
 
@@ -55,12 +55,10 @@
     };
 
     Wikipedia.prototype.keywords = function(text) {
-      var keywords, ranks, words;
+      var ranks, words;
       words = this.analyze(text);
       ranks = this.best(words);
-      keywords = _.map(ranks, 'name').join(', ');
-      console.log("Keywords: " + keywords);
-      return keywords;
+      return _.map(ranks, 'name').join(', ');
     };
 
     Wikipedia.prototype.dailyArticle = function(lang, callback) {
@@ -85,7 +83,6 @@
       var base_url,
         _this = this;
       base_url = "http://en.wikipedia.org/wiki/Special:Random";
-      console.log(base_url);
       return jqueryify(base_url, function(err, window) {
         var $, link;
         if (err) {
@@ -93,7 +90,6 @@
         }
         $ = window.$;
         link = window.location.href;
-        console.log(link);
         return _this.getImages(window, function(images) {
           if (images.length > 2) {
             return _this.scrape(link, callback);
@@ -105,20 +101,32 @@
     };
 
     Wikipedia.prototype.scrape = function(url, callback) {
-      var _this = this;
-      console.log("Wikipedia: " + url);
+      var metadata,
+        _this = this;
+      metadata = {
+        wikipedia: url
+      };
       return jqueryify(url, function(err, window) {
         var $, title;
         $ = window.$;
         title = $('#firstHeading').find('span').text();
-        console.log("Title: " + title);
+        metadata.title = title;
         return _this.getText(window, function(text) {
           var description, keywords;
           keywords = _this.keywords(text);
+          metadata.text = text;
+          metadata.keywords = keywords;
           description = _.first(text.split('. '), 3).join('. ');
-          console.log("Description: " + description);
+          metadata.description = description;
           return _this.getImages(window, function(images) {
-            return callback(title, text, images);
+            metadata.images = _.map(images, function(obj, key) {
+              if (_.isNumber(key)) {
+                return obj;
+              }
+              return null;
+            });
+            metadata.images = _.compact(metadata.images);
+            return callback(metadata);
           });
         });
       });

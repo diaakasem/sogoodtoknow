@@ -7,6 +7,18 @@ app.config ($routeProvider) ->
   .when '/project/:name',
     templateUrl: 'views/project.html'
     controller: 'ProjectCtrl'
+  .when '/new',
+    templateUrl: 'views/new.html'
+    controller: 'NewCtrl'
+  .when '/uploaded',
+    templateUrl: 'views/uploaded.html'
+    controller: 'UploadedCtrl'
+  .when '/videoed',
+    templateUrl: 'views/videoed.html'
+    controller: 'VideoedCtrl'
+  .when '/uploaddata/:name',
+    templateUrl: 'views/uploaddata.html'
+    controller: 'UploaddataCtrl'
   .otherwise redirectTo: "/"
 
 controller = (root)->

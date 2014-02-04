@@ -1,5 +1,5 @@
 "use strict"
-controller = (root, scope, http, params, timeout) ->
+controller = (root, scope, http, params, timeout, location) ->
 
   scope.project = {}
   scope.project.images = []
@@ -9,16 +9,41 @@ controller = (root, scope, http, params, timeout) ->
   scope.isSvg = (name)->
     return false  unless name
     name = name.toLowerCase()
-    res = _.str.endsWith(name, 'svg')
+    res = _.str.endsWith(name, 'svg') or _.str.endsWith(name, 'gif')
     res
+
+  scope.remove = ->
+    h = http
+      method: 'delete'
+      url: "/project/#{scope.project.name}"
+
+    h.success (res)->
+      console.log res
+      location.path '/'
+
+    h.error (err)->
+      console.log err
+
+  scope.markVideoed = ->
+    h = http
+      method: 'post'
+      url: "/project/#{scope.project.name}"
+      data:
+        status: 'videoed'
+
+    h.success (res)->
+      console.log res
+
+    h.error (err)->
+      console.log err
 
   promise = http method: 'get', url: "/project/#{params.name}"
   promise.success (result)=>
     scope.project = result
     scope.project.images = _.filter scope.project.images, (image)->
-      !scope.isSvg(image)
+      !scope.isSvg(image.name)
     i = 0
-    imgPath = scope.pathOf(scope.project.images[i++])
+    imgPath = scope.pathOf(scope.project.images[i++].name)
     $('.image img').attr 'src', imgPath
 
     # Fitting before speaking
@@ -27,7 +52,7 @@ controller = (root, scope, http, params, timeout) ->
     , 1000
 
     scope.start = _.once ->
-      root.audioElement.src = scope.project.audio
+      root.audioElement.src = "projects/#{scope.project.name}/audio.aiff.mp3"
       root.audioElement.play()
       onAudio = (event)=>
         scope.duration = root.audioElement.duration
@@ -43,10 +68,11 @@ controller = (root, scope, http, params, timeout) ->
         changeImage = ->
           if i >= imgCount
             scrollFn()
+            scope.markVideoed()
             return
 
           $('.image img').fadeOut 500, =>
-            $('.image img').attr 'src', scope.pathOf(scope.project.images[i])
+            $('.image img').attr 'src', scope.pathOf(scope.project.images[i].name)
             $('.image img').fadeIn 500
             timeout ->
               fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
@@ -67,4 +93,6 @@ controller = (root, scope, http, params, timeout) ->
 
 
 angular.module("nodeExecuterApp")
-.controller "ProjectCtrl", ['$rootScope', '$scope', '$http', '$routeParams', '$timeout', controller]
+.controller "ProjectCtrl",
+['$rootScope', '$scope', '$http', '$routeParams', '$timeout', '$location',
+controller]

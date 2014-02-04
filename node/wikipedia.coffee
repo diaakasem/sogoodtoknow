@@ -24,7 +24,7 @@ class exports.Wikipedia
     text = text.toLowerCase()
     textArr = text.split(' ')
     textArr = _.map textArr, (word)->
-      word = word.replace /[,\.]/, ''
+      word = word.replace /[,\.\)\(]/, ''
     words = {}
     _.each textArr, (word)->
       return  if word.length < 5
@@ -34,7 +34,7 @@ class exports.Wikipedia
       rank: value
     words = _.omit words, ['this', 'that', 'south', 'north', 'east', 'west',
     'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here',
-    'against', 'their', 'other', 'where']
+    'against', 'their', 'other', 'where', 'which']
     words
 
   best: (dict, count=10)->
@@ -43,9 +43,7 @@ class exports.Wikipedia
   keywords: (text)->
     words = @analyze text
     ranks = @best words
-    keywords = _.map(ranks, 'name').join(', ')
-    console.log "Keywords: #{keywords}"
-    keywords
+    _.map(ranks, 'name').join(', ')
 
   dailyArticle: (lang, callback) ->
     lang = "en"  if lang?
@@ -59,12 +57,10 @@ class exports.Wikipedia
 
   randomEn: (callback) ->
     base_url = "http://en.wikipedia.org/wiki/Special:Random"
-    console.log base_url
     jqueryify base_url, (err, window) =>
       throw err  if err
       $ = window.$
       link = window.location.href
-      console.log link
       @getImages window, (images)=>
         if images.length > 2
           @scrape link, callback
@@ -72,17 +68,24 @@ class exports.Wikipedia
           @randomEn callback
 
   scrape: (url, callback) ->
-    console.log "Wikipedia: #{url}"
+    metadata = { wikipedia: url }
     jqueryify url, (err, window)=>
       $ = window.$
       title = $('#firstHeading').find('span').text()
-      console.log "Title: #{title}"
+      metadata.title = title
       @getText window, (text)=>
         keywords = @keywords text
+        metadata.text = text
+        metadata.keywords = keywords
         description = _.first(text.split('. '), 3).join('. ')
-        console.log "Description: #{description}"
+        metadata.description = description
         @getImages window, (images)->
-          callback title, text, images
+          metadata.images = _.map images, (obj, key)->
+            if _.isNumber(key)
+              return obj
+            return null
+          metadata.images = _.compact metadata.images
+          callback metadata
 
   getImages: (window, callback) ->
     $ = window.$

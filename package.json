@@ -7,7 +7,8 @@
     "underscore.string": "~2.3.3",
     "lodash": "~2.4.1",
     "nodejs-fastload": "0.0.3",
-    "gm": "~1.14.2"
+    "gm": "~1.14.2",
+    "mongoose": "~3.8.6"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

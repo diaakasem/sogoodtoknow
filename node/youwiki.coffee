@@ -31,7 +31,7 @@ download = (uri, filename, callback) ->
   r.on 'end', callback
 
 
-class Manager
+class exports.Manager
 
   langs: ['en']
 
@@ -50,31 +50,41 @@ class Manager
     audio: path.join p, 'audio.aiff'
     text: path.join p, 'text.txt'
 
-  speak: (title, textFile, audioFile)->
+  speak: (title, textFile, audioFile, callback)->
     speaker.produce audioFile, textFile, (file)->
       fs.unlink audioFile
-      console.log 'Done' # + file
+      callback?(file)
 
-  downloadImages: (uri, images)->
+  downloadImages: (uri, images, callback)->
+    # For now we do not work with svg
     images = _.filter images, (image)->
       image.name.indexOf('svg') < 0
     i = 0
+    newImages = []
     downloadImage = ->
-      return  if i >= images.length
+      if i >= images.length
+        callback?(newImages)
+        return
       img = images[i++]
       dot = img.name.lastIndexOf('.')
       padded = pad(i)
       ext = img.name.substring(dot)
       out = path.join(uri, padded + ext)
       download img.url, out, ->
+        name = padded + '_resized' + ext
+        local = path.join(uri, name)
         im.resize
           srcPath: out
-          dstPath: path.join(uri, padded + '_resized' + ext)
+          dstPath: local
           width: 500
           height: 500
         , (err, stdout, stderr)->
+          img.name = name
+          img.status = 'success'
           if err
-            fs.unlink path.join(uri, padded + '_resized' + ext)
+            img.status = 'error'
+            fs.unlink path.join(uri, name)
+          newImages.push img
           fs.unlink out
           downloadImage()
     downloadImage()
@@ -83,17 +93,27 @@ class Manager
     name = title.toLowerCase()
     name.replace /\s/g, '_'
     
-  build: (title, text, images)->
-    project = @structure(@nameOf(title))
-    @downloadImages project.images, images
-    fs.writeFileSync project.text, text
-    @speak title, project.text, project.audio
+  build: (meta, onEnd)->
+    meta.name = @nameOf(meta.title)
+    project = @structure(meta.name)
 
-  wikipedia: ->
-    @wiki
-  run: (url)->
-    callback = (title, text, images)=>
-      @build(title, text, images)
+    callback = _.after 2, ->
+      onEnd(meta)
+
+    imagesDownloaded = (images)->
+      meta.images = images
+      callback()
+    speakDone = (audio)->
+      meta.audio = audio
+      callback()
+    @downloadImages project.images, meta.images, imagesDownloaded
+    fs.writeFileSync project.text, meta.text
+    @speak meta.title, project.text, project.audio, speakDone
+
+  run: (url, onEnd)->
+    #callback = (title, text, images)=>
+    callback = (metadata)=>
+      @build(metadata, onEnd)
 
     if url and url is 'random'
       @wiki.randomEn callback
@@ -102,10 +122,4 @@ class Manager
     else
       for lang in @langs
         @wiki.dailyArticle lang, callback
-
-m = new Manager()
-if process.argv.length > 1
-  m.run(process.argv[2])
-else
-  m.run()
 

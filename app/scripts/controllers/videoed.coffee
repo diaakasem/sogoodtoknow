@@ -4,13 +4,12 @@ controller = (scope, http, location) ->
     method: 'post'
     url: '/project/'
     data:
-      status: 'created'
+      status: 'videoed'
 
   scope.by_name = ''
   promise.success (result)->
-    console.log result
     scope.articles = result
 
 angular.module("nodeExecuterApp")
-.controller "MainCtrl",
+.controller 'VideoedCtrl',
   ['$scope', '$http', '$location', controller]

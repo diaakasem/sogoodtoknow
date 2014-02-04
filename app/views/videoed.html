@@ -2,13 +2,14 @@
 
   <h1>Dwikia</h1>
 
-  <tabnav selected='created' filter="by_name"></tabnav>
+  <tabnav selected='videoed' filter="by_name"></tabnav>
 
   <ul class="projects">
     <li ng-repeat="article in articles | filter:{title: by_name}">
     <a href="#/project/{{article.name}}">{{article.title}}</a>
     </li>
   </ul>
+
   <div class="pull-right">
     <p>You now have {{articles.length}} project</p>
   </div>
