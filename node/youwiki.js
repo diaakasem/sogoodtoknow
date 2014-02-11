@@ -77,27 +77,39 @@
 
     Manager.prototype.speak = function(title, textFile, audioFile, callback) {
       return speaker.produce(audioFile, textFile, function(file) {
-        fs.unlink(audioFile);
+        fs.unlink(audioFile, function() {});
         return typeof callback === "function" ? callback(file) : void 0;
       });
     };
 
     Manager.prototype.downloadImages = function(uri, images, callback) {
-      var downloadImage, i, newImages;
+      var afterAllDone, downloadImage, i, newImages;
       images = _.filter(images, function(image) {
         return image.name.indexOf('svg') < 0;
       });
       i = 0;
       newImages = [];
+      afterAllDone = function() {};
+      if (callback) {
+        afterAllDone = _.after(images.length + 1, _.once(callback));
+      }
       downloadImage = function() {
         var dot, ext, img, out, padded;
-        if (i >= images.length) {
-          if (typeof callback === "function") {
-            callback(newImages);
-          }
-          return;
+        console.log("calling after all");
+        if (typeof afterAllDone === "function") {
+          afterAllDone(newImages);
         }
         img = images[i++];
+        if (!img) {
+          return;
+        }
+        if (!img.name) {
+          console.log("ERROR in img object");
+          console.log(img);
+          console.log(" -- ");
+          downloadImage();
+          return;
+        }
         dot = img.name.lastIndexOf('.');
         padded = pad(i);
         ext = img.name.substring(dot);
@@ -116,10 +128,10 @@
             img.status = 'success';
             if (err) {
               img.status = 'error';
-              fs.unlink(path.join(uri, name));
+              fs.unlink(path.join(uri, name), function() {});
             }
             newImages.push(img);
-            fs.unlink(out);
+            fs.unlink(out, function() {});
             return downloadImage();
           });
         });
@@ -137,17 +149,25 @@
       var callback, imagesDownloaded, project, speakDone;
       meta.name = this.nameOf(meta.title);
       project = this.structure(meta.name);
-      callback = _.after(2, function() {
+      console.log(project);
+      callback = _.after(2, _.once(function() {
+        console.log("Done building : " + meta.name);
         return onEnd(meta);
-      });
+      }));
       imagesDownloaded = function(images) {
-        meta.images = images;
         return callback();
       };
       speakDone = function(audio) {
         meta.audio = audio;
         return callback();
       };
+      meta.images = _.filter(meta.images, function(img) {
+        return !img.name.toLowerCase().match(/.+\.svg/);
+      });
+      meta.images = _.map(meta.images, function(img) {
+        img.name = img.name.toLowerCase();
+        return img;
+      });
       this.downloadImages(project.images, meta.images, imagesDownloaded);
       fs.writeFileSync(project.text, meta.text);
       return this.speak(meta.title, project.text, project.audio, speakDone);
@@ -157,6 +177,9 @@
       var callback, lang, _i, _len, _ref, _results,
         _this = this;
       callback = function(metadata) {
+        if (metadata === 'error') {
+          return onEnd('error');
+        }
         return _this.build(metadata, onEnd);
       };
       if (url && url === 'random') {

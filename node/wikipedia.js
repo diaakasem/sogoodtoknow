@@ -86,7 +86,7 @@
       return jqueryify(base_url, function(err, window) {
         var $, link;
         if (err) {
-          throw err;
+          return typeof callback === "function" ? callback('error') : void 0;
         }
         $ = window.$;
         link = window.location.href;

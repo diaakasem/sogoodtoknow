@@ -8,14 +8,12 @@ controller = (root, scope, http, params, timeout, location) ->
 
   scope.isSvg = (name)->
     return false  unless name
-    name = name.toLowerCase()
-    res = _.str.endsWith(name, 'svg') or _.str.endsWith(name, 'gif')
-    res
+    _.str.endsWith(name.toLowerCase(), 'svg')
 
-  scope.remove = ->
+  remover = (url)->
     h = http
       method: 'delete'
-      url: "/project/#{scope.project.name}"
+      url: url
 
     h.success (res)->
       console.log res
@@ -24,15 +22,39 @@ controller = (root, scope, http, params, timeout, location) ->
     h.error (err)->
       console.log err
 
-  scope.markVideoed = ->
+  scope.removeDB = ->
+    remover "/project/id/#{scope.project._id}"
+
+  scope.remove = ->
+    remover "/project/#{scope.project.name}"
+
+  scope.rebuild = ->
+    url = scope.project.wikipedia
+    console.log url
+    promise = http
+      method: 'post'
+      url: '/build/url/'
+      data:
+        url: url
+
+    promise.success (result)->
+      console.log result
+      location.path '/'
+
+    promise.error (error)->
+      console.log error
+
+  scope.mark = (status, stay)->
     h = http
       method: 'post'
       url: "/project/#{scope.project.name}"
       data:
-        status: 'videoed'
+        status: status
 
     h.success (res)->
       console.log res
+      unless stay
+        location.path '/'
 
     h.error (err)->
       console.log err
@@ -68,7 +90,7 @@ controller = (root, scope, http, params, timeout, location) ->
         changeImage = ->
           if i >= imgCount
             scrollFn()
-            scope.markVideoed()
+            scope.mark('videoed', true)
             return
 
           $('.image img').fadeOut 500, =>

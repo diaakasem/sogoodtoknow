@@ -65,16 +65,24 @@
   end = function(req, res) {
     return function(meta) {
       var project;
+      if (meta === 'error') {
+        return res.json({
+          result: "error"
+        });
+      }
       meta.status = 'created';
-      console.log(JSON.stringify(meta));
       project = new ProjectModel();
       project = _.extend(project, meta);
       return project.save(function(err, obj) {
         if (err) {
-          throw err;
+          return res.json({
+            "error": err
+          });
         }
-        console.log(obj);
-        return res.json(meta);
+        console.log("Returning result...");
+        return res.json({
+          result: "done"
+        });
       });
     };
   };
@@ -100,6 +108,16 @@
       status: status
     }, function(err, list) {
       return res.json(list);
+    });
+  });
+
+  app["delete"]('/project/id/:id', function(req, res) {
+    var id;
+    id = req.params.id;
+    return ProjectModel.remove({
+      _id: id
+    }, function(err, project) {
+      return res.json(project);
     });
   });
 
@@ -133,7 +151,6 @@
     return ProjectModel.findOne({
       name: name
     }, function(err, project) {
-      console.log(project.text);
       return res.json(project);
     });
   });

@@ -58,7 +58,7 @@ class exports.Wikipedia
   randomEn: (callback) ->
     base_url = "http://en.wikipedia.org/wiki/Special:Random"
     jqueryify base_url, (err, window) =>
-      throw err  if err
+      return callback?('error')  if err
       $ = window.$
       link = window.location.href
       @getImages window, (images)=>

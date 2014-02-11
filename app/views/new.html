@@ -21,7 +21,15 @@
     </div>
     <div style="text-align: center">
       <div style="margin: 20px; display: inline-block;">
-        <button class="btn btn-lg btn-warning" ng-click="random()">
+        <label class="btn btn-lg btn-warning" ng-click="continus=!continus">
+          <i class="glyphicon"
+            ng-class="{'glyphicon-check': continus, 'glyphicon-unchecked': !continus}"></i>
+          Continus
+        </label>
+      </div>
+      <div style="margin: 20px; display: inline-block;">
+        <button class="btn btn-lg btn-warning" ng-click="random()"
+          ng-disabled="inprogress">
           <i class="glyphicon glyphicon glyphicon-random"></i>
           Random
         </button>

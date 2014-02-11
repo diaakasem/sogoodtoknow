@@ -83,3 +83,9 @@ footer{
     border-top: 1px solid #383838;
     height: 55px;
 }
+.nav.nav-tabs li a {
+    color: #ffdf3f;
+}
+.nav.nav-tabs li a:hover {
+    color: #222;
+}

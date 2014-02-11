@@ -43,14 +43,14 @@ m = new Manager()
 
 end = (req, res)->
   (meta)->
+    return res.json({result: "error"})  if meta is 'error'
     meta.status = 'created'
-    console.log JSON.stringify(meta)
     project = new ProjectModel()
     project = _.extend project, meta
     project.save (err, obj)->
-      throw err  if err
-      console.log obj
-      res.json meta
+      return res.json {"error": err}  if err
+      console.log "Returning result..."
+      res.json {result: "done"}
 
 app.post '/build/url/', (req, res)->
   url = req.body.url
@@ -69,6 +69,11 @@ app.post '/project/', (req, res)->
   ProjectModel.find {status: status}, (err, list)->
     res.json list
 
+app.delete '/project/id/:id', (req, res)->
+  id = req.params.id
+  ProjectModel.remove {_id: id}, (err, project)->
+    res.json project
+
 app.delete '/project/:name', (req, res)->
   name = req.params.name
   ProjectModel.remove {name: name}, (err, project)->
@@ -84,7 +89,6 @@ app.post '/project/:name', (req, res)->
 app.get '/project/:name', (req, res)->
   name = req.params.name
   ProjectModel.findOne {name: name}, (err, project)->
-    console.log project.text
     res.json project
 
 app.listen 3000

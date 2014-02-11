@@ -4,7 +4,7 @@
   var controller;
 
   controller = function(root, scope, http, params, timeout, location) {
-    var promise,
+    var promise, remover,
       _this = this;
     scope.project = {};
     scope.project.images = [];
@@ -12,19 +12,16 @@
       return "projects/" + scope.project.name + "/images/" + img;
     };
     scope.isSvg = function(name) {
-      var res;
       if (!name) {
         return false;
       }
-      name = name.toLowerCase();
-      res = _.str.endsWith(name, 'svg') || _.str.endsWith(name, 'gif');
-      return res;
+      return _.str.endsWith(name.toLowerCase(), 'svg');
     };
-    scope.remove = function() {
+    remover = function(url) {
       var h;
       h = http({
         method: 'delete',
-        url: "/project/" + scope.project.name
+        url: url
       });
       h.success(function(res) {
         console.log(res);
@@ -34,17 +31,45 @@
         return console.log(err);
       });
     };
-    scope.markVideoed = function() {
+    scope.removeDB = function() {
+      return remover("/project/id/" + scope.project._id);
+    };
+    scope.remove = function() {
+      return remover("/project/" + scope.project.name);
+    };
+    scope.rebuild = function() {
+      var promise, url;
+      url = scope.project.wikipedia;
+      console.log(url);
+      promise = http({
+        method: 'post',
+        url: '/build/url/',
+        data: {
+          url: url
+        }
+      });
+      promise.success(function(result) {
+        console.log(result);
+        return location.path('/');
+      });
+      return promise.error(function(error) {
+        return console.log(error);
+      });
+    };
+    scope.mark = function(status, stay) {
       var h;
       h = http({
         method: 'post',
         url: "/project/" + scope.project.name,
         data: {
-          status: 'videoed'
+          status: status
         }
       });
       h.success(function(res) {
-        return console.log(res);
+        console.log(res);
+        if (!stay) {
+          return location.path('/');
+        }
       });
       return h.error(function(err) {
         return console.log(err);
@@ -91,7 +116,7 @@
             var _this = this;
             if (i >= imgCount) {
               scrollFn();
-              scope.markVideoed();
+              scope.mark('videoed', true);
               return;
             }
             return $('.image img').fadeOut(500, function() {

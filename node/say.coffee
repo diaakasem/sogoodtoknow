@@ -28,7 +28,7 @@ class exports.Say extends Executer
     v = @voice()
     audio.voice = v
     cmd =
-      name: 'say'
+      name:  "say -o \"#{audioFile}\" -f \"#{textFile}\" "
       command: "say -o \"#{audioFile}\" -f \"#{textFile}\" "
     if v
       cmd.command += "-v #{v} "
@@ -41,7 +41,7 @@ class exports.Say extends Executer
   toMp3: (file, callback)->
     fs.unlink "#{file}.mp3", =>
       cmd =
-        name: 'convert'
+        name:  "ffmpeg -i \"#{file}\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"#{file}\".mp3"
         command: "ffmpeg -i \"#{file}\" -f mp3 -acodec libmp3lame -ab 192000 -ar 44100 \"#{file}\".mp3"
 
       @execute cmd, ->

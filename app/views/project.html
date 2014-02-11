@@ -1,8 +1,8 @@
 <!-- Docs master nav -->
 <header class="navbar navbar-static-top" role="banner">
 <div class="container">
- <h1>{{ project.title}}</h1>
- </div>
+  <h1>{{ project.title}}</h1>
+</div>
 </header>
 
 <audio autoplay>
@@ -28,11 +28,16 @@ Your browser does not support the audio element.
 <!-- Footer
 ================================================== -->
 <footer class="row navbar-fixed-bottom" role="contentinfo">
-  <div class="col-lg-offset-6 col-xs-6">
+<div class="container">
+  <div class="row text-center" style="padding-top: 10px;">
     <a href='#/' class="btn btn-success">
       <i class="glyphicon glyphicon-arrow-left"></i>
       Back
     </a>
+    <button ng-click="removeDB()" class="btn btn-danger">
+      <i class="glyphicon glyphicon-trash"></i>
+      Remove DB Record
+    </button>
     <button ng-click="remove()" class="btn btn-danger">
       <i class="glyphicon glyphicon-trash"></i>
       Remove
@@ -41,12 +46,21 @@ Your browser does not support the audio element.
       <i class="glyphicon glyphicon-info-sign"></i>
       Info
     </a>
-    <button class="btn btn-success" ng-click="markVideoed()">
+    <button class="btn btn-success" ng-click="rebuild()">
+      <i class="glyphicon glyphicon-retweet"></i>
+      Rebuild
+    </button>
+    <button class="btn btn-warning" ng-click="mark('useless')">
+      <i class="glyphicon glyphicon-ban-circle"></i>
+      Useless
+    </button>
+    <button class="btn btn-success" ng-click="mark('videoed')">
       <i class="glyphicon glyphicon-ok"></i>
       Videoed
     </button>
     <button class="btn btn-success" ng-click="start()"> Start
       <i class="glyphicon glyphicon-play"></i>
     </button>
+  </div>
   </div>
 </footer>

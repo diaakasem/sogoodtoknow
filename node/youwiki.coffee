@@ -52,7 +52,7 @@ class exports.Manager
 
   speak: (title, textFile, audioFile, callback)->
     speaker.produce audioFile, textFile, (file)->
-      fs.unlink audioFile
+      fs.unlink audioFile, ->
       callback?(file)
 
   downloadImages: (uri, images, callback)->
@@ -61,11 +61,23 @@ class exports.Manager
       image.name.indexOf('svg') < 0
     i = 0
     newImages = []
+    afterAllDone = ->
+    if callback
+      afterAllDone = _.after images.length + 1, _.once(callback)
+
     downloadImage = ->
-      if i >= images.length
-        callback?(newImages)
-        return
+      # Return new images when done
+      console.log "calling after all"
+      afterAllDone?(newImages)
+
       img = images[i++]
+      return  unless img
+      unless img.name
+        console.log "ERROR in img object"
+        console.log img
+        console.log " -- "
+        downloadImage()
+        return
       dot = img.name.lastIndexOf('.')
       padded = pad(i)
       ext = img.name.substring(dot)
@@ -83,9 +95,9 @@ class exports.Manager
           img.status = 'success'
           if err
             img.status = 'error'
-            fs.unlink path.join(uri, name)
+            fs.unlink path.join(uri, name), ->
           newImages.push img
-          fs.unlink out
+          fs.unlink out, ->
           downloadImage()
     downloadImage()
 
@@ -96,16 +108,26 @@ class exports.Manager
   build: (meta, onEnd)->
     meta.name = @nameOf(meta.title)
     project = @structure(meta.name)
+    console.log project
 
-    callback = _.after 2, ->
+    callback = _.after 2, _.once ->
+      console.log "Done building : #{meta.name}"
       onEnd(meta)
 
     imagesDownloaded = (images)->
-      meta.images = images
       callback()
+
     speakDone = (audio)->
       meta.audio = audio
       callback()
+
+    meta.images = _.filter meta.images, (img)->
+      not img.name.toLowerCase().match /.+\.svg/
+
+    meta.images = _.map meta.images, (img)->
+      img.name = img.name.toLowerCase()
+      img
+
     @downloadImages project.images, meta.images, imagesDownloaded
     fs.writeFileSync project.text, meta.text
     @speak meta.title, project.text, project.audio, speakDone
@@ -113,6 +135,7 @@ class exports.Manager
   run: (url, onEnd)->
     #callback = (title, text, images)=>
     callback = (metadata)=>
+      return onEnd('error')  if metadata is 'error'
       @build(metadata, onEnd)
 
     if url and url is 'random'

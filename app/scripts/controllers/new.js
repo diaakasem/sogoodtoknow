@@ -6,18 +6,26 @@
   controller = function(scope, http, location) {
     var exe;
     scope.wikipedia = '';
+    scope.continus = false;
+    scope.inprogress = false;
     exe = function(url, data) {
       var promise;
+      scope.inprogress = true;
       promise = http({
         method: 'post',
         url: url,
         data: data
       });
       promise.success(function(result) {
-        console.log(result);
-        return location.path('/');
+        scope.inprogress = false;
+        if (scope.continus && url.indexOf('random') > 0) {
+          return scope.random();
+        } else {
+          return location.path('/');
+        }
       });
       return promise.error(function(error) {
+        scope.inprogress = false;
         return console.log(error);
       });
     };
