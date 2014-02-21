@@ -10,11 +10,13 @@ callback = (error, stdout, stderr)->
   if error
     if lastResult
       lastResult = false
-      s.say 'I am not online'
+      #s.say 'I am not online'
+      s.arSay 'النت قطع'
   else
     unless lastResult
       lastResult = true
-      s.say 'Horray, I am online'
+      #s.say 'Horray, I am online'
+      s.arSay 'النت رجع'
 
 setInterval ->
   p.pingGoogle callback

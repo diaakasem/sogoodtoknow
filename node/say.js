@@ -12,7 +12,8 @@
     __extends(Say, _super);
 
     Say.prototype.voices = {
-      en: ['tom', 'ava']
+      en: ['tom', 'ava'],
+      ar: ['tarik']
     };
 
     function Say(defaultlang) {
@@ -30,6 +31,19 @@
         return null;
       }
       return arr[Math.floor(Math.random() * arr.length)];
+    };
+
+    Say.prototype.arSay = function(something, callback) {
+      var cmd, v;
+      v = this.voice('ar');
+      cmd = {
+        name: 'say',
+        command: "say " + something
+      };
+      if (v) {
+        cmd.command += " -v " + v;
+      }
+      return this.execute(cmd, callback);
     };
 
     Say.prototype.say = function(something, callback) {

@@ -5,6 +5,7 @@ class exports.Say extends Executer
 
   voices:
     en: ['tom', 'ava']
+    ar: ['tarik']
 
   constructor: (@defaultlang)->
     super()
@@ -13,6 +14,15 @@ class exports.Say extends Executer
     arr = if lang then @voices[lang] else []
     return null  unless arr.length
     arr[Math.floor(Math.random() * arr.length)]
+
+  arSay: (something, callback)->
+    v = @voice('ar')
+    cmd =
+      name: 'say'
+      command: "say #{something}"
+    if v
+      cmd.command += " -v #{v}"
+    @execute(cmd, callback)
 
   say: (something, callback)->
     v = @voice()
