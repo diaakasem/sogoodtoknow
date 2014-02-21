@@ -12,7 +12,7 @@
     __extends(Say, _super);
 
     Say.prototype.voices = {
-      en: ['tom', 'ava'],
+      en: ['tom', 'ava', 'karen', 'lee', 'serena'],
       ar: ['tarik']
     };
 

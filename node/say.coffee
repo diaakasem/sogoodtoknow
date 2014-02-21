@@ -4,7 +4,7 @@ fs = require 'fs'
 class exports.Say extends Executer
 
   voices:
-    en: ['tom', 'ava']
+    en: ['tom', 'ava', 'karen', 'lee', 'serena']
     ar: ['tarik']
 
   constructor: (@defaultlang)->
