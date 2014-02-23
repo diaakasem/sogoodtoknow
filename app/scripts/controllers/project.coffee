@@ -6,6 +6,14 @@ controller = (root, scope, http, params, timeout, location) ->
   scope.pathOf = (img)->
     "projects/#{scope.project.name}/images/#{img}"
 
+  imageExtensions = ['png', 'jpg', 'jpeg']
+  scope.isEmpty = (name)->
+    return true  unless name
+    for ext in imageExtensions
+      if _.str.endsWith(name.toLowerCase(), ext)
+        return false
+    return true
+
   scope.isSvg = (name)->
     return false  unless name
     _.str.endsWith(name.toLowerCase(), 'svg')
@@ -63,7 +71,8 @@ controller = (root, scope, http, params, timeout, location) ->
   promise.success (result)=>
     scope.project = result
     scope.project.images = _.filter scope.project.images, (image)->
-      !scope.isSvg(image.name)
+      # if svg or incorrect extension ( remove it )
+      !scope.isSvg(image.name) && !scope.isEmpty(image.name)
     i = 0
     imgPath = scope.pathOf(scope.project.images[i++].name)
     $('.image img').attr 'src', imgPath

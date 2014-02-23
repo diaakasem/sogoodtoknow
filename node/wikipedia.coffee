@@ -124,5 +124,6 @@ class exports.Wikipedia
     text = text.replace /\[\d+\]/g, ''
     text = text.replace /\.([A-Z])/g, '. $1'
     text = text.replace '[citation needed]', ''
+    console.log text
     callback text
 

@@ -1,5 +1,9 @@
 
 _ = require 'lodash'
+yahoo = require('./node/yahoo')
+Yahoo = new yahoo.Yahoo()
+twitter = require('./node/twitter')
+Twitter = new twitter.Twitter()
 path = require('path')
 fs = require('fs')
 lodash = require('lodash')
@@ -90,5 +94,19 @@ app.get '/project/:name', (req, res)->
   name = req.params.name
   ProjectModel.findOne {name: name}, (err, project)->
     res.json project
+
+app.get '/trends/:name', (req, res)->
+  name = req.params.name
+  Yahoo.woeid  name, (err, obj)->
+    body = JSON.parse(obj.body)
+    if not body.places.place or not body.places.place.length
+      console.log obj
+      return res.send null
+    woeid = body.places.place[0].woeid
+    console.log woeid
+    Twitter.trendsFor woeid, (err, obj)->
+      console.log obj
+      res.send obj
+
 
 app.listen 3000

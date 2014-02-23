@@ -25,10 +25,15 @@ pad = (num, size=2) ->
 
 fs = require("fs")
 request = require("request")
+
 download = (uri, filename, callback) ->
-  r = request(uri)
-  r.pipe fs.createWriteStream(filename)
-  r.on 'end', callback
+  try
+    r = request(uri)
+    r.pipe fs.createWriteStream(filename)
+    r.on 'end', callback
+  catch e
+    console.log "Error while downloading #{uri}"
+    callback?(null)
 
 
 class exports.Manager
@@ -76,13 +81,15 @@ class exports.Manager
         console.log "ERROR in img object"
         console.log img
         console.log " -- "
-        downloadImage()
-        return
+        return downloadImage()
       dot = img.name.lastIndexOf('.')
       padded = pad(i)
       ext = img.name.substring(dot)
       out = path.join(uri, padded + ext)
-      download img.url, out, ->
+      download img.url, out, (res)->
+        if res is null
+          return downloadImage()
+        
         name = padded + '_resized' + ext
         local = path.join(uri, name)
         im.resize

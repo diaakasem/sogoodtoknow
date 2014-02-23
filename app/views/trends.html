@@ -1,0 +1,36 @@
+<div class="hero-unit container">
+
+  <h1>Dwikia</h1>
+
+  <tabnav selected='trends'></tabnav>
+
+  <div class="row" style="margin: 10px auto;">
+      <div class="col-sm-6">
+        <button class="btn" ng-click="trendsFor('New York')">New York</button>
+        <button class="btn" ng-click="trendsFor('Washington')">Washington</button>
+        <button class="btn" ng-click="trendsFor('USA')">USA</button>
+        <button class="btn" ng-click="trendsFor('California')">California</button>
+        <button class="btn" ng-click="trendsFor('London')">London</button>
+      </div>
+      <div class="col-sm-6">
+        <span class="input-group input-group-lg">
+          <input type="text" placeholder="Place in the world" class="form-control"
+          ng-model="place">
+          <span class="input-group-btn">
+            <button class="btn btn-success" type="button"
+              ng-click="trendsFor(place)">
+              <i class="glyphicon glyphicon-gear"></i>
+              Show Trends
+            </button>
+          </span>
+        </span>
+      </div>
+  </div>
+  <div class="row">
+    <ul class="trends col-xs-12">
+      <li ng-repeat="trend in trends" class="trend col-lg-2 col-md-3 col-sm-6 col-xs-12">
+      <a href="{{trend.url}}" target="_blank">{{trend.name}}</a>
+      </li>
+    </ul>
+  </div>
+</div>

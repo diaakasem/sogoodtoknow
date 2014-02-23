@@ -24,6 +24,9 @@
     }).when('/uploaddata/:name', {
       templateUrl: 'views/uploaddata.html',
       controller: 'UploaddataCtrl'
+    }).when('/trends', {
+      templateUrl: 'views/trends.html',
+      controller: 'TrendsCtrl'
     }).otherwise({
       redirectTo: "/"
     });

@@ -45,10 +45,16 @@
   request = require("request");
 
   download = function(uri, filename, callback) {
-    var r;
-    r = request(uri);
-    r.pipe(fs.createWriteStream(filename));
-    return r.on('end', callback);
+    var e, r;
+    try {
+      r = request(uri);
+      r.pipe(fs.createWriteStream(filename));
+      return r.on('end', callback);
+    } catch (_error) {
+      e = _error;
+      console.log("Error while downloading " + uri);
+      return typeof callback === "function" ? callback(null) : void 0;
+    }
   };
 
   exports.Manager = (function() {
@@ -107,15 +113,17 @@
           console.log("ERROR in img object");
           console.log(img);
           console.log(" -- ");
-          downloadImage();
-          return;
+          return downloadImage();
         }
         dot = img.name.lastIndexOf('.');
         padded = pad(i);
         ext = img.name.substring(dot);
         out = path.join(uri, padded + ext);
-        return download(img.url, out, function() {
+        return download(img.url, out, function(res) {
           var local, name;
+          if (res === null) {
+            return downloadImage();
+          }
           name = padded + '_resized' + ext;
           local = path.join(uri, name);
           return im.resize({

@@ -4,12 +4,26 @@
   var controller;
 
   controller = function(root, scope, http, params, timeout, location) {
-    var promise, remover,
+    var imageExtensions, promise, remover,
       _this = this;
     scope.project = {};
     scope.project.images = [];
     scope.pathOf = function(img) {
       return "projects/" + scope.project.name + "/images/" + img;
+    };
+    imageExtensions = ['png', 'jpg', 'jpeg'];
+    scope.isEmpty = function(name) {
+      var ext, _i, _len;
+      if (!name) {
+        return true;
+      }
+      for (_i = 0, _len = imageExtensions.length; _i < _len; _i++) {
+        ext = imageExtensions[_i];
+        if (_.str.endsWith(name.toLowerCase(), ext)) {
+          return false;
+        }
+      }
+      return true;
     };
     scope.isSvg = function(name) {
       if (!name) {
@@ -83,7 +97,7 @@
       var i, imgPath;
       scope.project = result;
       scope.project.images = _.filter(scope.project.images, function(image) {
-        return !scope.isSvg(image.name);
+        return !scope.isSvg(image.name) && !scope.isEmpty(image.name);
       });
       i = 0;
       imgPath = scope.pathOf(scope.project.images[i++].name);
