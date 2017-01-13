@@ -30,10 +30,19 @@ deleteFolderRecursive = (path) ->
 projectsPath = path.join(__dirname, 'app', 'projects')
 
 express = require("express")
+busboy = require('express-busboy')
+bodyParser = require('body-parser')
+errorHandler = require('errorhandler')
 app = express()
 app.set('view engine', 'ejs')
 app.use '/', express.static(__dirname + '/app')
-app.use(express.bodyParser())
+bodyParserConfig =
+  limit: '999kb',
+  extended: true,
+  parameterLimit: 5000000
+app.use(bodyParser.json(bodyParserConfig))
+app.use(bodyParser.urlencoded(bodyParserConfig))
+app.use(errorHandler())
 app.engine('html', require('ejs').renderFile)
 app.set('db connect string', 'mongodb://localhost/dwikia')
 db.config(app)
@@ -97,16 +106,13 @@ app.get '/project/:name', (req, res)->
 
 app.get '/trends/:name', (req, res)->
   name = req.params.name
-  Yahoo.woeid  name, (err, obj)->
-    body = JSON.parse(obj.body)
-    if not body.places.place or not body.places.place.length
-      console.log obj
-      return res.send null
-    woeid = body.places.place[0].woeid
-    console.log woeid
+  console.log name
+  Yahoo.woeid  name, (err, woeid)->
+    if err
+      return console.error 'Error yahoo', err
     Twitter.trendsFor woeid, (err, obj)->
       console.log obj
       res.send obj
 
 
-app.listen 3000
+app.listen 4000

@@ -38,7 +38,7 @@ class exports.Wikipedia
     words
 
   best: (dict, count=10)->
-    _.chain(dict).sortBy('rank').reverse().first(count).value()
+    _.chain(dict).sortBy('rank').reverse().take(count).value()
 
   keywords: (text)->
     words = @analyze text
@@ -77,7 +77,7 @@ class exports.Wikipedia
         keywords = @keywords text
         metadata.text = text
         metadata.keywords = keywords
-        description = _.first(text.split('. '), 3).join('. ')
+        description = _.take(text.split('. '), 3).join('. ')
         metadata.description = description
         @getImages window, (images)->
           metadata.images = _.map images, (obj, key)->

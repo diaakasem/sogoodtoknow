@@ -11,3 +11,5 @@ class exports.Ping extends Executer
   pingGoogle: (callback)->
     @ping 'google.com', callback
     
+  pingEam: (callback)->
+    @ping 'eam.im:8083', callback

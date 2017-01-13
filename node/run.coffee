@@ -10,15 +10,13 @@ callback = (error, stdout, stderr)->
   if error
     if lastResult
       lastResult = false
-      #s.say 'I am not online'
-      s.arSay 'النت قطع'
+      s.say 'Cenergy is offline.'
   else
     unless lastResult
       lastResult = true
-      #s.say 'Horray, I am online'
-      s.arSay 'النت رجع'
+      s.say 'Cenergy is online.'
 
 setInterval ->
-  p.pingGoogle callback
+  p.pingEam callback
 , 1000
 
