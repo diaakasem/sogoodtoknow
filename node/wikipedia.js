@@ -111,7 +111,7 @@
         return function(err, window) {
           var $, title;
           $ = window.$;
-          title = $('#firstHeading').find('span').text();
+          title = $('#firstHeading').text();
           metadata.title = title;
           return _this.getText(window, function(text) {
             var description, keywords;

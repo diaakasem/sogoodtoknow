@@ -71,7 +71,7 @@ class exports.Wikipedia
     metadata = { wikipedia: url }
     jqueryify url, (err, window)=>
       $ = window.$
-      title = $('#firstHeading').find('span').text()
+      title = $('#firstHeading').text()
       metadata.title = title
       @getText window, (text)=>
         keywords = @keywords text

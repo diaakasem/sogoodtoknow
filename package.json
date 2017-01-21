@@ -18,7 +18,7 @@
     "node-twitter": "*",
     "nodejs-fastload": "*",
     "oauth": "^0.9.14",
-    "twitter": "*",
+    "twitter": "^1.7.0",
     "underscore.string": "*",
     "yql": "^1.0.2",
     "yqlp": "^0.2.0"

@@ -93,26 +93,31 @@ app.delete '/project/:name', (req, res)->
     deleteFolderRecursive path.join('app', 'projects', name)
     res.json project
 
-app.post '/project/:name', (req, res)->
-  name = req.params.name
+app.post '/project/:id', (req, res)->
   status = req.body.status
-  ProjectModel.update {name: name}, {status: status}, (err, project)->
+  ProjectModel.update {_id: req.params.id}, {status: status}, (err, project)->
     res.json project
 
-app.get '/project/:name', (req, res)->
-  name = req.params.name
-  ProjectModel.findOne {name: name}, (err, project)->
+app.get '/project/:id', (req, res)->
+  id = req.params.id
+  ProjectModel.findOne {_id: id}, (err, project)->
     res.json project
 
 app.get '/trends/:name', (req, res)->
   name = req.params.name
-  console.log name
-  Yahoo.woeid  name, (err, woeid)->
-    if err
-      return console.error 'Error yahoo', err
-    Twitter.trendsFor woeid, (err, obj)->
-      console.log obj
-      res.send obj
+  Twitter.placeTrends name, (err, obj)->
+    console.log obj
+    res.send obj
+
+#app.get '/trends/:name', (req, res)->
+  #name = req.params.name
+  #console.log name
+  #Yahoo.woeid  name, (err, woeid)->
+    #if err
+      #return console.error 'Error yahoo', err
+    #Twitter.trendsFor woeid, (err, obj)->
+      #console.log obj
+      #res.send obj
 
 
 app.listen 4000

@@ -6,7 +6,9 @@
 
   <ul class="projects">
     <li ng-repeat="article in articles | filter:{title: by_name}">
-    <a href="#/project/{{article.name}}">{{article.title || article.title || article.description}}</a>
+    <a href="#/project/{{article._id}}">
+      {{article.name || article.title || article._id || article.description.substring(0, 100)}}
+    </a>
     </li>
   </ul>
   <div class="pull-right">

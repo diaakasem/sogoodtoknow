@@ -4,7 +4,7 @@ body {
   color: #333;
 }
 body {
-  background-image: url('./bg.jpg');
+  background-image: url('bg.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -34,11 +34,17 @@ ul.projects {
 }
 ul.projects li {
   display: inline-block;
-  min-width: 320px;
+  width: 320px;
   margin: 5px;
+  padding: 5px;
+  border: 1px solid grey;
+  background-color: ivory;
 }
 ul.projects a {
-  color: ivory;
+  color: #222;
+}
+ul.projects a:hover {
+  font-style: none;
 }
 .textwrapper {
   float: left;

@@ -4,7 +4,7 @@ app.config ($routeProvider) ->
   $routeProvider.when "/",
     templateUrl: "views/main.html"
     controller: "MainCtrl"
-  .when '/project/:name',
+  .when '/project/:id',
     templateUrl: 'views/project.html'
     controller: 'ProjectCtrl'
   .when '/new',

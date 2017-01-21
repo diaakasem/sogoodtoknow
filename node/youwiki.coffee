@@ -89,7 +89,7 @@ class exports.Manager
       download img.url, out, (res)->
         if res is null
           return downloadImage()
-        
+
         name = padded + '_resized' + ext
         local = path.join(uri, name)
         im.resize
@@ -111,11 +111,10 @@ class exports.Manager
   nameOf: (title)->
     name = title.toLowerCase()
     name.replace /\s/g, '_'
-    
+
   build: (meta, onEnd)->
     meta.name = @nameOf(meta.title)
     project = @structure(meta.name)
-    console.log project
 
     callback = _.after 2, _.once ->
       console.log "Done building : #{meta.name}"

@@ -67,7 +67,7 @@ controller = (root, scope, http, params, timeout, location) ->
     h.error (err)->
       console.log err
 
-  promise = http method: 'get', url: "/project/#{params.name}"
+  promise = http method: 'get', url: "/project/#{params.id}"
   promise.success (result)=>
     scope.project = result
     scope.project.images = _.filter scope.project.images, (image)->
@@ -118,7 +118,7 @@ controller = (root, scope, http, params, timeout, location) ->
         timeout.cancel(scope.imageTimer)
         root.audioElement.removeEventListener "loadedmetadata", onAudio
 
-    
+
     # To have a space to cut the movie when everything is loaded
     #timeout start, 2000
 
