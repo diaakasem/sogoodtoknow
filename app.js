@@ -57,8 +57,10 @@ app.get('/wikipedia/build/:name', (req, res)=> res.json({ hello: 'world' }));
 const m = new Manager();
 
 const end = (req, res)=>
-  function(meta){
-    if (meta === 'error') { return res.json({result: "error"}); }
+  function(err, meta) {
+    if (err) {
+      return res.json({result: "error"});
+    }
     meta.status = 'created';
     let project = new ProjectModel();
     project = _.extend(project, meta);

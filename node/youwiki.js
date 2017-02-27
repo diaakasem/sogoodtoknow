@@ -1,9 +1,11 @@
+'use strict';
+
 const {Wikipedia} = require('./wikipedia');
 const {Say} = require('./say');
 const path = require('path');
 const mkdirp = require('mkdirp');
 const _ = require('lodash');
-const gm = require('gm');
+const async = require('async');
 const im = require('imagemagick');
 
 const speaker = new Say('en');
@@ -15,19 +17,24 @@ const cmdString = function(text){
   text = text.replace(/\)/g, '\\)');
   text = text.replace(/\|/g, '\\| ');
   text = text.replace(/\[/g, '\\[');
-  return text = text.replace(/\]/g, '\\]');
+  text = text.replace(/\]/g, '\\]');
+  return text;
 };
 
 const pad = function(num, size) {
-  if (size == null) { size = 2; }
-  let s = num + "";
-  while (s.length < size) { s = `0${s}`; }
+  if (isNaN(size)) {
+    size = 2;
+  }
+  let s = num + '';
+  while (s.length < size) {
+    s = `0${s}`;
+  }
   return s;
 };
 
 
-const fs = require("fs");
-const request = require("request");
+const fs = require('fs');
+const request = require('request');
 
 const download = function(uri, filename, callback) {
   try {
@@ -35,11 +42,11 @@ const download = function(uri, filename, callback) {
     r.pipe(fs.createWriteStream(filename));
     return r.on('end', callback);
   } catch (e) {
-    console.log(`Error while downloading ${uri}`);
-    return (typeof callback === 'function' ? callback(null) : undefined);
+    let msg = `Error while downloading ${uri}`;
+    console.log(msg);
+    return _.isFunction(callback) ? callback(msg) : undefined;
   }
 };
-
 
 const langs = ['en'];
 exports.Manager = class Manager {
@@ -65,9 +72,10 @@ exports.Manager = class Manager {
   }
 
   speak(title, textFile, audioFile, callback){
-    return speaker.produce(audioFile, textFile, function(file){
-      fs.unlink(audioFile, function() {});
-      return (typeof callback === 'function' ? callback(file) : undefined);
+    speaker.produce(audioFile, textFile, function(file){
+      fs.unlink(audioFile, function(err) {
+        callback(null, file);
+      });
     });
   }
 
@@ -75,36 +83,26 @@ exports.Manager = class Manager {
     // For now we do not work with svg
     images = _.filter(images, image=> image.name.indexOf('svg') < 0);
     let i = 0;
-    const newImages = [];
-    let afterAllDone = function() {};
-    if (callback) {
-      afterAllDone = _.after(images.length + 1, _.once(callback));
-    }
-
-    var downloadImage = function() {
+    async.mapSeries(images, function(img, cb) {
+      i++;
       // Return new images when done
-      console.log("calling after all");
-      if (typeof afterAllDone === 'function') {
-        afterAllDone(newImages);
-      }
-
-      const img = images[i++];
-      if (!img) { return; }
       if (!img.name) {
-        console.log("ERROR in img object");
+        console.log('ERROR in img object');
         console.log(img);
-        console.log(" -- ");
-        return downloadImage();
+        console.log(' -- ');
+        return cb('No Image Name Found.');
       }
       const dot = img.name.lastIndexOf('.');
       const padded = pad(i);
       const ext = img.name.substring(dot);
       const out = path.join(uri, padded + ext);
-      return download(img.url, out, function(res){
-        if (res === null) {
-          return downloadImage();
+      return download(img.url, out, function(err, res){
+        console.log(arguments);
+        if (err) {
+          console.log(arguments);
+          console.error('No Image Result', img);
+          return cb();
         }
-
         const name = padded + '_resized' + ext;
         const local = path.join(uri, name);
         return im.resize({
@@ -112,62 +110,66 @@ exports.Manager = class Manager {
           dstPath: local,
           width: 500,
           height: 500
-        }
-        , function(err, stdout, stderr){
+        }, function(err, stdout, stderr){
           img.name = name;
           img.status = 'success';
           if (err) {
             img.status = 'error';
-            fs.unlink(path.join(uri, name), function() {});
+            return fs.unlink(path.join(uri, name), cb);
           }
-          newImages.push(img);
-          fs.unlink(out, function() {});
-          return downloadImage();
+          fs.unlink(out, function() {
+            cb(null, img);
+          });
         });
       });
-    };
-    return downloadImage();
+    }, callback);
   }
 
-  nameOf(title){
+  nameOf(title) {
     const name = title.toLowerCase();
     return name.replace(/\s/g, '_');
   }
 
-  build(meta, onEnd){
+  build(meta, onEnd) {
+    let that = this;
     meta.name = this.nameOf(meta.title);
     const project = this.structure(meta.name);
-
-    const callback = _.after(2, _.once(function() {
+    async.parallel({
+      sound: function(cb) {
+        that.speak(meta.title, project.text, project.audio, function(err, audio) {
+          meta.audio = audio;
+          cb();
+        });
+      },
+      images: function(cb) {
+        meta.images = _.filter(meta.images, img=> !img.name.toLowerCase().match(/.+\.svg/));
+        meta.images = _.map(meta.images, function(img){
+          img.name = img.name.toLowerCase();
+          return img;
+        });
+        that.downloadImages(project.images, meta.images, cb);
+      },
+      text: function(cb) {
+        fs.writeFile(project.text, meta.text, cb);
+      }
+    }, (err, res)=> {
+      if (err) {
+        console.error(err);
+      }
       console.log(`Done building : ${meta.name}`);
-      return onEnd(meta);
-    })
-    );
-
-    const imagesDownloaded = images=> callback();
-
-    const speakDone = function(audio){
-      meta.audio = audio;
-      return callback();
-    };
-
-    meta.images = _.filter(meta.images, img=> !img.name.toLowerCase().match(/.+\.svg/));
-
-    meta.images = _.map(meta.images, function(img){
-      img.name = img.name.toLowerCase();
-      return img;
+      return onEnd(err, meta);
     });
-
-    this.downloadImages(project.images, meta.images, imagesDownloaded);
-    fs.writeFileSync(project.text, meta.text);
-    return this.speak(meta.title, project.text, project.audio, speakDone);
   }
 
-  run(url, onEnd){
+  run(url, onEnd) {
+    let that = this;
     //callback = (title, text, images)=>
-    const callback = metadata=> {
-      if (metadata === 'error') { return onEnd('error'); }
-      return this.build(metadata, onEnd);
+    const callback = (err, metadata)=> {
+      if (err) {
+        console.error(err);
+        return onEnd('error');
+      }
+      return that.build(metadata, onEnd);
     };
 
     if (url && (url === 'random')) {
