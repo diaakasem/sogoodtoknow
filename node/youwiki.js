@@ -136,10 +136,10 @@ exports.Manager = class Manager {
     const project = this.structure(meta.name);
     async.parallel({
       sound: function(cb) {
-        that.speak(meta.title, project.text, project.audio, function(err, audio) {
+        that.speak(meta.title, project.text, project.audio, _.once(function(err, audio) {
           meta.audio = audio;
           cb();
-        });
+        }));
       },
       images: function(cb) {
         meta.images = _.filter(meta.images, img=> !img.name.toLowerCase().match(/.+\.svg/));

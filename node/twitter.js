@@ -1,20 +1,25 @@
+'use strict';
+
 const twitter = require('twitter');
 const _ = require('lodash');
 const jsdom = require('jsdom');
 const Say = require('./say');
 
-const jqueryify = (url, callback)=>
+const jqueryify = (url, callback)=> {
+  if (!url) {
+    return callback('No URL');
+  }
   jsdom.env({
     url,
-    scripts: ["http://code.jquery.com/jquery-2.0.2.min.js"],
+    scripts: ['http://code.jquery.com/jquery-2.0.2.min.js'],
     done: callback
-  })
-;
+  });
+};
 
 
 const CONSUMER_KEY = '7kLdyMV97dFlwsE5WPG7J8kzE';
 const CONSUMER_SECRET =  'z0VKtLBM5GHDmnKnXj8wZUcQhnyVQ54a2YaIYYw8PNIaqymo0Q';
-const BEARER_TOKEN = new Buffer("${CONSUMER_KEY}:${CONSUMER_SECRET}").toString('base64');
+const BEARER_TOKEN = new Buffer('${CONSUMER_KEY}:${CONSUMER_SECRET}').toString('base64');
 
 const urls = {
   'New York': 'https://trends24.in/united-states/new-york/~cloud',
@@ -50,6 +55,10 @@ exports.Twitter = class Twitter {
 
   placeTrends(place, callback){
     return jqueryify(urls[place], (err, window)=> {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      }
       let $ = window.$;
       let tags = _.map($('ol#cloud-ol li a'), item=> $(item).text().trim());
       tags = _.filter(tags, tag=> tag.indexOf('#') < 0);
