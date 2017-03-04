@@ -32,12 +32,10 @@ angular.module("nodeExecuterApp")
       method: 'delete',
       url
     });
-
     h.then(function(res){
       console.log(res);
       return $location.path('/');
     });
-
     return h.catch(err=> console.log(err));
   };
 
@@ -98,7 +96,7 @@ angular.module("nodeExecuterApp")
     $timeout(() => fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
     , 1000);
 
-    return $scope.start = _.once(function() {
+    $scope.start = _.once(function() {
       $rootScope.audioElement.src = `projects/${$scope.project.name}/audio.aiff.mp3`;
       $rootScope.audioElement.play();
       const onAudio = event=> {
@@ -140,6 +138,14 @@ angular.module("nodeExecuterApp")
         return $rootScope.audioElement.removeEventListener("loadedmetadata", onAudio);
       });
     });
+
+    $scope.begin = function() {
+      $scope.project.ready = true;
+      $scope.start();
+      $timeout(() => fit($('.image img')[0], $('.image')[0], {
+        vAlign: fit.CENTER
+      }), 1);
+    };
   }
   );
 });

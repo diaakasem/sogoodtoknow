@@ -1,7 +1,7 @@
 <!-- Docs master nav -->
 <header class="navbar navbar-static-top" role="banner">
 <div class="container">
-  <h1>{{ project.title}}</h1>
+  <h1 ng-show="project.ready">{{ project.title}}</h1>
 </div>
 </header>
 
@@ -12,7 +12,27 @@ Your browser does not support the audio element.
 
 <!-- Page content of course! -->
 <main id="content" role="main">
-<div class="container" ng-if="project">
+<div class="container"
+     ng-if="project && !project.ready && !project.selectedImage">
+  <div class="image"
+       ng-repeat="image in project.images track by $index"
+       ng-click="project.selectedImage = image">
+    <img class="img" ng-src="{{pathOf(image.name)}}"/>
+  </div>
+</div>
+<div class="container text-center splash"
+     ng-show="project && !project.ready && project.selectedImage">
+  <div class="row center">
+    <img class="img slash-image"
+         ng-src="{{pathOf(project.selectedImage.name)}}"/>
+  </div>
+  <div class="row">
+    <h1 class="text-center">
+      {{project.title}}
+    </h1>
+  </div>
+</div>
+<div class="container" ng-show="project && project.ready">
   <div class="image">
     <img class="img" src=""/>
   </div>
@@ -58,9 +78,11 @@ Your browser does not support the audio element.
       <i class="glyphicon glyphicon-ok"></i>
       Videoed
     </button>
-    <button class="btn btn-success" ng-click="start()"> Start
+    <button class="btn btn-success" ng-click="begin()"> Start
       <i class="glyphicon glyphicon-play"></i>
     </button>
   </div>
-  </div>
+</div>
 </footer>
+<div id="guides">
+</div>

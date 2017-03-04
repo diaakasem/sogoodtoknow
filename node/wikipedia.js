@@ -192,6 +192,9 @@ exports.Wikipedia = class Wikipedia {
     text = text.replace(/\[\d+\]/g, '');
     text = text.replace(/\.([A-Z])/g, '. $1');
     text = text.replace('[citation needed]', '');
+    text = text.replace('[clarification needed]', '');
+    text = text.replace('[clarification needed],', '');
+
     console.log(text);
     return callback(null, text);
   }
