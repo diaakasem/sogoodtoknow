@@ -1,12 +1,12 @@
 
 const _ = require('lodash');
+const path = require('path');
+const fs = require('fs');
+const lodash = require('lodash');
 const yahoo = require('./node/yahoo');
 const Yahoo = new yahoo.Yahoo();
 const twitter = require('./node/twitter');
 const Twitter = new twitter.Twitter();
-const path = require('path');
-const fs = require('fs');
-const lodash = require('lodash');
 const db = require('./node/db');
 const {Manager} = require('./node/youwiki');
 const mongoose = require('mongoose');
@@ -23,13 +23,9 @@ var deleteFolderRecursive = function(path) {
         fs.unlinkSync(curPath);
       }
     });
-
     fs.rmdirSync(path);
   }
 };
-
-
-const projectsPath = path.join(__dirname, 'app', 'projects');
 
 const express = require("express");
 const busboy = require('express-busboy');
@@ -46,8 +42,10 @@ const bodyParserConfig = {
 app.use(bodyParser.json(bodyParserConfig));
 app.use(bodyParser.urlencoded(bodyParserConfig));
 app.use(errorHandler());
+let connectionUrl = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}`;
+console.log("MONGO: " + connectionUrl);
 app.engine('html', require('ejs').renderFile);
-app.set('db connect string', 'mongodb://localhost/dwikia');
+app.set('db connect string', connectionUrl);
 db.config(app);
 const ProjectModel = mongoose.model('Project');
 
@@ -81,9 +79,7 @@ app.post('/build/random/', (req, res)=> m.run('random', end(req, res)));
 app.post('/build/today/', (req, res)=> m.run(null, end(req, res)));
 
 app.post('/project/', function(req, res){
-  //name = req.body.name
   const { status } = req.body;
-  //projects = fs.readdirSync(projectsPath)
   return ProjectModel.find({status}, (err, list)=> {
     res.status(200).send(list);
   });
@@ -129,6 +125,5 @@ app.get('/trends/:name', function(req, res){
     //Twitter.trendsFor woeid, (err, obj)->
       //console.log obj
       //res.send obj
-
 
 app.listen(4000);
