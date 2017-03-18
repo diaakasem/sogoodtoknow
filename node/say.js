@@ -2,7 +2,7 @@ const {Executer} = require('./executer');
 const fs = require('fs');
 const voices = {
   //en: ['tom', 'ava', 'karen', 'lee', 'serena']
-  en: ['tom', 'ava'],
+  en: ['tom', 'ava', 'allison', 'samantha', 'susan', 'alex'],
   ar: ['tarik']
 };
 

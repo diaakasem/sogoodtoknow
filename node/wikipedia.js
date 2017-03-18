@@ -175,6 +175,9 @@ exports.Wikipedia = class Wikipedia {
       // When there is no empty p and only h2
       if (secondParagraph.length > 0) {
         all = secondParagraph.first().prevAll('p, ul, dl').reverse();
+        if (!all.length) {
+          all = $('#mw-content-text>p');
+        }
       } else {
         all = $('#mw-content-text>p');
       }

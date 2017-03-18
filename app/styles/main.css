@@ -87,6 +87,7 @@ ul.projects a:hover {
   max-height: 500px;
   max-width: 500px;
   opacity: 1;
+  margin-left: 525px;
 }
 .splash img {
   border-radius: 50px;

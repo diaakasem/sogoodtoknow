@@ -19,6 +19,7 @@
     "node-twitter": "*",
     "nodejs-fastload": "*",
     "oauth": "^0.9.14",
+    "seneca": "^3.3.0",
     "twitter": "^1.7.0",
     "underscore.string": "*",
     "yql": "^1.0.2",
@@ -54,6 +55,7 @@
     "node": ">=5.0.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "start": "nodemon --inspect app"
   }
 }
