@@ -1,0 +1,4 @@
+#!/bin/sh
+# mongodb='mongodb+srv://diaa-dwikia:jcuWdqhfea53OmVo@cluster0-px3ml.mongodb.net/test?retryWrites=true&w=majority'
+mongodb='mongodb://mongo:27017/dwikia'
+

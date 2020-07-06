@@ -1,6 +1,6 @@
-const {Executer} = require('./executer');
+import Executer from './executer.js';
 
-exports.Ping = class Ping extends Executer {
+export default class Ping extends Executer {
 
   ping(website, callback){
     const cmd = {
@@ -9,11 +9,11 @@ exports.Ping = class Ping extends Executer {
     };
     return this.execute(cmd, callback);
   }
-  
+
   pingGoogle(callback){
     return this.ping('google.com', callback);
   }
-    
+
   pingEam(callback){
     return this.ping('eam.im:8083', callback);
   }

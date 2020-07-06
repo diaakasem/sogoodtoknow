@@ -1,7 +1,7 @@
-const sys = require('sys');
-const { exec } = require('child_process');
+import sys from 'sys';
+import { exec } from 'child_process';
 
-exports.Executer = class Executer {
+export default class Executer {
   constructor() {
     this.callbacks = {};
   }

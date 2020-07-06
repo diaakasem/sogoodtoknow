@@ -1,16 +1,22 @@
-'use strict';
+import _ from 'lodash';
+// import { JSDOM } from 'jsdom';
+import cheerio from 'cheerio';
+import axios from 'axios';
 
-const _ = require('lodash');
-const jsdom = require('jsdom');
-const Say = require('./say');
+import Say from './say.js';
 
-const jqueryify = (url, callback)=>
-  jsdom.env({
-    url,
-    scripts: ['http://code.jquery.com/jquery-2.0.2.min.js'],
-    done: callback
-  })
-;
+/**
+ * jqueryify
+ *
+ * @param url
+ * @param callback
+ * @returns {undefined}
+ */
+async function jqueryify(url, callback) {
+  const { data } = await axios.get(url)
+  const $ = cheerio.load(data);
+  return $;
+}
 
 const langSelector =
   //fr: "div#mf-lumieresur p a"
@@ -22,7 +28,7 @@ const langSelector =
 
   //ar: 'div#mf-fa p>b>a'
 
-exports.Wikipedia = class Wikipedia {
+export default class Wikipedia {
 
   analyze(text){
     text = text.toLowerCase();
@@ -58,112 +64,70 @@ exports.Wikipedia = class Wikipedia {
     return _.map(ranks, 'name').join(', ');
   }
 
-  dailyArticle(lang, callback) {
+  async dailyArticle(lang) {
     let that = this;
     if (lang) {
       lang = 'en';
     }
     const baseUrl = `http://${lang}.wikipedia.org`;
-    return jqueryify(baseUrl, (err, html) => {
-      if (err) {
-        console.error(err);
-        return callback('failed to jquirify');
-      }
-      const { $ } = html;
-      const link = $(langSelector[lang]).first();
-      if (link.length) {
+    const $ = await jqueryify(baseUrl)
+    const link = $(langSelector[lang]).first();
+    if (link.length) {
         const url = baseUrl + link.attr('href');
-        return that.scrape(url, callback);
-      }
+        return that.scrape(url);
     }
-    );
+    return [];
   }
 
-  randomEn(callback) {
+  async randomEn() {
     let that = this;
     const baseUrl = 'http://en.wikipedia.org/wiki/Special:Random';
-    return jqueryify(baseUrl, (err, window) => {
-      if (err) {
-        console.error(err);
-        return callback('failed to jquirify');
-      }
-      const { $ } = window;
-      const link = window.location.href;
-      return this.getImages(window, (err, images)=> {
-        if (err) {
-          console.error(err);
-          return callback('Unable to get images');
-        }
-        if (images.length > 2) {
-          return that.scrape(link, callback);
-        } else {
-          return that.randomEn(callback);
-        }
-      }
-      );
+    const $ = await jqueryify(baseUrl)
+    const link = $.location.href;
+    const images = await this.getImages($)
+    if (images.length > 2) {
+        return that.scrape(link);
     }
-    );
+    return that.randomEn();
   }
 
-  scrape(url, callback) {
+  async scrape(url) {
     const metadata = {
       wikipedia: url
     };
-    jqueryify(url, (err, window)=> {
-      if (err) {
-        console.error(err);
-        return callback('failed to jquirify');
-      }
-      const { $ } = window;
-      const title = $('#firstHeading').text();
-      metadata.title = title;
-      let that = this;
-      this.getText(window, (err, text)=> {
-        if (err) {
-          console.error(err);
-          return callback('Error getting text');
-        }
-        const keywords = this.keywords(text);
-        metadata.text = text;
-        metadata.keywords = keywords;
-        const description = _.take(text.split('. '), 3).join('. ');
-        metadata.description = description;
-        that.getImages(window, (err, images)=> {
-          if (err) {
-            console.error(err);
-            return callback('Unable to get images');
-          }
-          metadata.images = _.map(images, function(obj, key){
-            if (_.isNumber(key)) {
-              return obj;
-            }
-            return null;
-          });
-          metadata.images = _.compact(metadata.images);
-          callback(null, metadata);
-        });
-      });
+    const $ = await jqueryify(url)
+    const title = $('#firstHeading').text();
+    metadata.title = title;
+    const text = await this.getText($)
+    const keywords = this.keywords(text);
+    metadata.text = text;
+    metadata.keywords = keywords;
+    const description = _.take(text.split('. '), 3).join('. ');
+    metadata.description = description;
+    const images = await getImages($)
+    metadata.images = _.map(images, function(obj, key){
+        return _.isNumber(key) || null;
     });
+    metadata.images = _.compact(metadata.images);
+    return metadata
   }
 
-  getImages(window, callback) {
-    const { $ } = window;
+  async getImages(window) {
     const imagesFilter = function() { return $(this).attr('width') > 100; };
-    const map = function() {
+    function map() {
       const arr = $(this).attr('src').split('/');
       const name = arr.splice(-1);
       return {
         name: arr[arr.length - 1] + '',
         url: (`http:${arr.join('/')}`).replace(/\/thumb/, '')
       };
-    };
+    }
     const images = $('img[src*="//upload"]').filter(imagesFilter).map(map);
-    return callback(null, images);
+    return images;
   }
 
-  getText(window, callback) {
+  async getText($) {
     let all;
-    const { $ } = window;
     //text = $('#mw-content-text>p').text()
     $.fn.reverse = [].reverse;
     const emptyP = $('#mw-content-text p:empty');
@@ -182,7 +146,6 @@ exports.Wikipedia = class Wikipedia {
         all = $('#mw-content-text>p');
       }
     }
-
     all = all.filter(":not(:contains('Coordinates'))");
     all.find('li').text(function(i, text){
       if (text.slice(-1) !== '.') {
@@ -197,9 +160,9 @@ exports.Wikipedia = class Wikipedia {
     text = text.replace('[citation needed]', '');
     text = text.replace('[clarification needed]', '');
     text = text.replace('[clarification needed],', '');
-
     console.log(text);
-    return callback(null, text);
+    return text
   }
+
 };
 

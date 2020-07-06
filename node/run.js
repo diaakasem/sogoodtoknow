@@ -1,5 +1,5 @@
-const {Ping} = require('./ping');
-const {Say} = require('./say');
+import Ping from './ping.js';
+import Say from './say.js';
 
 const p = new Ping();
 const s = new Say();

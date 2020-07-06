@@ -1,6 +1,9 @@
-const mongoose = require("mongoose");
+'use strict'
+
+import mongoose from 'mongoose'
+
 const projectSchema = new mongoose.Schema({
-  name: { type: String, index: true},
+  name: { type: String, index: true },
   title: String,
   text: String,
   description: String,
@@ -14,9 +17,22 @@ const projectSchema = new mongoose.Schema({
     file: String
   }
 });
-module.exports.projectSchema = projectSchema;
-module.exports.config = function(app) {
-  mongoose.model("Project", projectSchema);
-  return mongoose.connect(app.get("db connect string"));
-};
 
+async function config (app) {
+  mongoose.model('Project', projectSchema)
+  const connectionUrl = app.get('db connect string')
+  console.info('Connection URL', connectionUrl)
+  try {
+      return await mongoose.connect(connectionUrl + '?useNewUrlParser=true', {
+          useNewUrlParser: true
+      })
+  } catch (e) {
+      console.error(e)
+      throw e
+  }
+}
+
+export default {
+  config,
+  projectSchema
+}

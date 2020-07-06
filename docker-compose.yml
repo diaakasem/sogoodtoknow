@@ -1,32 +1,25 @@
-version: '2'
+version: '3'
 services:
 
   web:
-    image: node:6
+    image: node:14
     working_dir: /src
     volumes:
       - .:/src
     command:
       - ./start.sh
-    environment:
-      MONGO_HOST: mongo
-      MONGO_PORT: 27017
-      MONGO_DATABASE: dwikia
-    links:
-      - mongo:mongo
-    depends_on:
-      - mongo
-    expose:
-      - 4000
-      - 5859
+    env_file:
+      - docker-compose-env
     ports:
       - 5859:5859
       - 4000:4000
 
   mongo:
     image: mongo
+    ports:
+      - "0.0.0.0:27017:27017"
     volumes:
-      - ./data:/data/db
-    expose:
-      - 27017
+      - cache-data:/data/db
 
+volumes:
+  cache-data:

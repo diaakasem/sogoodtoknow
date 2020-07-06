@@ -1,6 +1,7 @@
 const YQL = require('yql');
 const yahoo_app_id = 'vCu4FUjV34HSXktB0RHLPOjtgQPm3vnh0zchQcgX.ow8THogzl3Nta_rAC4-';
-exports.Yahoo = class Yahoo {
+
+export default class Yahoo {
 
   woeid(place, callback){
     //url = "http://where.yahooapis.com/v1/places.q('#{place}')?format=json&appid=#{yahoo_app_id}"

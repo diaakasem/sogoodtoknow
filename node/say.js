@@ -1,12 +1,13 @@
-const {Executer} = require('./executer');
-const fs = require('fs');
+import fs from 'fs';
+import Executer from './executer.js';
+
 const voices = {
   //en: ['tom', 'ava', 'karen', 'lee', 'serena']
   en: ['tom', 'ava', 'allison', 'samantha', 'susan', 'alex'],
   ar: ['tarik']
 };
 
-exports.Say = class Say extends Executer {
+export default class Say extends Executer {
   constructor(defaultlang){
     super();
     this.defaultlang = defaultlang;

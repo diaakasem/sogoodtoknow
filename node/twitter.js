@@ -1,9 +1,8 @@
-'use strict';
+import Twitter from 'twitter';
+import _ from 'lodash';
+import jsdom from 'jsdom';
 
-const twitter = require('twitter');
-const _ = require('lodash');
-const jsdom = require('jsdom');
-const Say = require('./say');
+import Say from './say.js';
 
 const jqueryify = (url, callback)=> {
   if (!url) {
@@ -28,7 +27,7 @@ const urls = {
   'United States': 'https://trends24.in/united-states/~cloud'
 };
 
-exports.Twitter = class Twitter {
+export default class TwitterClass {
 
   constructor() {
     this.auth();
@@ -36,7 +35,7 @@ exports.Twitter = class Twitter {
 
   auth() {
     console.info(BEARER_TOKEN);
-    this.twit = new twitter({
+    this.twit = new Twitter({
       consumer_key: CONSUMER_KEY,
       consumer_secret: CONSUMER_SECRET,
       //access_token_key: '52365348-crI292ocHUqQShx0UvoSd4TqAIVZHJIMxxqfoPuQg',
