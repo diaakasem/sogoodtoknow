@@ -2,6 +2,10 @@ version: '3'
 services:
 
   web:
+    # build:
+      # context: .
+      # dockerfile: ./Dockerfile
+    # image: rickydunlop/nodejs-ffmpeg
     image: node:14
     working_dir: /src
     volumes:
@@ -13,6 +17,8 @@ services:
     ports:
       - 5859:5859
       - 4000:4000
+    depends_on:
+      - mongo
 
   mongo:
     image: mongo

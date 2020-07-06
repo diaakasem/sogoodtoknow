@@ -1,4 +1,4 @@
-import sys from 'sys';
+// import sys from 'sys';
 import { exec } from 'child_process';
 
 export default class Executer {
@@ -37,10 +37,10 @@ export default class Executer {
 
   puts(error, stdout, stderr){
     if (error) {
-      return sys.puts(stderr);
+      // return sys.puts(stderr);
+      return console.error(stderr);
     } else {
-      return sys.puts(stdout);
+      return console.info(stdout);
     }
   }
-};
-
+}

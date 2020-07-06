@@ -57,7 +57,7 @@ export default class Manager {
   }
 
   pathOf(title){
-    return path.join(__dirname, '..', 'app', 'projects', title);
+    return path.join(process.cwd(), '..', 'app', 'projects', title);
   }
 
   structure(title){
@@ -127,8 +127,16 @@ export default class Manager {
   }
 
   async build(meta) {
+    if (!meta) {
+        return {
+            sound: null,
+            images: [],
+            text: ''
+        };
+    }
     meta.name = this.nameOf(meta.title);
-    meta.images = _.filter(meta.images, img => !img.name.toLowerCase().match(/.+\.svg/));
+    console.log('images', meta.images)
+    meta.images = _.filter(meta.images, img => img.name && !img.name.toLowerCase().match(/.+\.svg/));
     meta.images = _.map(meta.images, function(img){
         img.name = img.name.toLowerCase();
         return img;
@@ -150,15 +158,11 @@ export default class Manager {
       let metadata;
       if (url && (url === 'random')) {
           metadata = await this.wiki.randomEn();
-          return this.build(metadata)
       } else if (url && (url !== 'random')) {
           metadata = await this.wiki.scrape(url);
       } else {
-          const result = await Promise.map(lang, (lang) => {
-              this.wiki.dailyArticle(lang)
-              metadata = _.first(_.compact(result))
-          })
+          metadata = await this.wiki.dailyArticle('en')
       }
       return this.build(metadata)
   }
-};
+}

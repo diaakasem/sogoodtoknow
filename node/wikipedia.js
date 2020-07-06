@@ -51,14 +51,14 @@ export default class Wikipedia {
     return words;
   }
 
-  best(dict, count){
+  best(dict, count) {
     if (isNaN(count)) {
       count = 10;
     }
     return _.chain(dict).sortBy('rank').reverse().take(count).value();
   }
 
-  keywords(text){
+  keywords(text) {
     const words = this.analyze(text);
     const ranks = this.best(words);
     return _.map(ranks, 'name').join(', ');
@@ -104,7 +104,7 @@ export default class Wikipedia {
     metadata.keywords = keywords;
     const description = _.take(text.split('. '), 3).join('. ');
     metadata.description = description;
-    const images = await getImages($)
+    const images = await this.getImages($)
     metadata.images = _.map(images, function(obj, key){
         return _.isNumber(key) || null;
     });
@@ -112,7 +112,7 @@ export default class Wikipedia {
     return metadata
   }
 
-  async getImages(window) {
+  async getImages($) {
     const imagesFilter = function() { return $(this).attr('width') > 100; };
     function map() {
       const arr = $(this).attr('src').split('/');
