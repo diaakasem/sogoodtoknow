@@ -17,7 +17,7 @@
     "imagemagick": "*",
     "jquery": "^3.5.1",
     "jsdom": "^16.2.2",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "mongoose": "^5.9.18",
     "nodemon": "^2.0.4",
     "twitter": "^1.7.1",
