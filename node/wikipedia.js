@@ -83,10 +83,9 @@ export default class Wikipedia {
     let that = this;
     const baseUrl = 'http://en.wikipedia.org/wiki/Special:Random';
     const $ = await jqueryify(baseUrl)
-    const link = $.location.href;
     const images = await this.getImages($)
     if (images.length > 2) {
-        return that.scrape(link);
+        return that.scrape(baseUrl);
     }
     return that.randomEn();
   }

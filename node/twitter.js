@@ -1,9 +1,10 @@
 import Twitter from 'twitter';
-import _ from 'lodash';
-import jsdom from 'jsdom';
+// import _ from 'lodash';
+// import jsdom from 'jsdom';
 
-import Say from './say.js';
+// import Say from './say.js';
 
+/*
 const jqueryify = (url, callback)=> {
   if (!url) {
     return callback('No URL');
@@ -14,18 +15,19 @@ const jqueryify = (url, callback)=> {
     done: callback
   });
 };
+*/
 
 
 const CONSUMER_KEY = '7kLdyMV97dFlwsE5WPG7J8kzE';
 const CONSUMER_SECRET =  'z0VKtLBM5GHDmnKnXj8wZUcQhnyVQ54a2YaIYYw8PNIaqymo0Q';
 const BEARER_TOKEN = new Buffer('${CONSUMER_KEY}:${CONSUMER_SECRET}').toString('base64');
 
-const urls = {
-  'New York': 'https://trends24.in/united-states/new-york/~cloud',
-  'California': 'https://trends24.in/united-states/san-francisco/~cloud',
-  'London': 'https://trends24.in/united-kingdom/london/~cloud',
-  'United States': 'https://trends24.in/united-states/~cloud'
-};
+// const urls = {
+  // 'New York': 'https://trends24.in/united-states/new-york/~cloud',
+  // 'California': 'https://trends24.in/united-states/san-francisco/~cloud',
+  // 'London': 'https://trends24.in/united-kingdom/london/~cloud',
+  // 'United States': 'https://trends24.in/united-states/~cloud'
+// };
 
 export default class TwitterClass {
 
@@ -52,6 +54,7 @@ export default class TwitterClass {
     });
   }
 
+    /*
   placeTrends(place, callback){
     return jqueryify(urls[place], (err, window)=> {
       if (err) {
@@ -66,5 +69,6 @@ export default class TwitterClass {
     }
     );
   }
+  */
 };
 
