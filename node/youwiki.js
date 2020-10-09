@@ -1,3 +1,4 @@
+import axios from 'axios';
 import path from 'path';
 import _ from 'lodash';
 import mkdirp from 'mkdirp';
@@ -37,16 +38,23 @@ function pad(num, size) {
   return s;
 };
 
-function download (uri, filename, callback) {
-  try {
-    const r = request(uri);
-    r.pipe(fs.createWriteStream(filename));
-    return r.on('end', callback);
-  } catch (e) {
-    let msg = `Error while downloading ${uri}`;
-    console.log(msg);
-    return _.isFunction(callback) ? callback(msg) : undefined;
-  }
+async function download (uri, filename) {
+  const response = await axios({
+      method: "get",
+      url: uri,
+      responseType: "stream"
+  });
+  response.data.pipe(fs.createWriteStream(filename));
+  // return a promise and resolve when download finishes
+  return new Promise((resolve, reject) => {
+    response.data.on('end', () => {
+      resolve();
+    });
+
+    response.data.on('error', () => {
+      reject();
+    });
+  });
 };
 
 const langs = ['en'];
@@ -57,7 +65,7 @@ export default class Manager {
   }
 
   pathOf(title){
-    return path.join(process.cwd(), '..', 'app', 'projects', title);
+    return path.join(process.cwd(), 'app', 'projects', title);
   }
 
   structure(title){
@@ -85,39 +93,37 @@ export default class Manager {
     return Promise.mapSeries(images, async function(img) {
         i++;
         // Return new images when done
-        try {
-            if (!img.name) {
-                console.log('ERROR in img object');
-                console.log(img);
-                console.log(' -- ');
-                throw new Error('No Image Name Found.');
-            }
-            const dot = img.name.lastIndexOf('.');
-            const padded = pad(i);
-            const ext = img.name.substring(dot);
-            const out = path.join(uri, padded + ext);
-            const res = await download(img.url, out)
-            const name = padded + '_resized' + ext;
-            const local = path.join(uri, name);
-            return im.resize({
+        if (!img.name) {
+            // console.log('ERROR in img object');
+            // console.log(img);
+            // console.log(' -- ');
+            throw new Error('No Image Name Found.');
+        }
+        const dot = img.name.lastIndexOf('.');
+        const padded = pad(i);
+        const ext = img.name.substring(dot);
+        const out = path.join(uri, padded + ext);
+        await download(img.url, out)
+        const name = padded + '_resized' + ext;
+        const local = path.join(uri, name);
+        return new Promise((resolve, reject) => {
+            im.resize({
                 srcPath: out,
                 dstPath: local,
                 width: 500,
                 height: 500
-            }, async function(err, stdout, stderr){
+            }, function(err, stdout, stderr){
                 img.name = name;
                 img.status = 'success';
+                const r = () => resolve(img)
                 if (err) {
+                    // console.error(err);
                     img.status = 'error';
-                    return unlink(path.join(uri, name));
+                    return unlink(path.join(uri, name)).then(r).catch(r);
                 }
-                await unlink(out)
-                return img
+                return unlink(out).then(r).catch(r);
             });
-        } catch (e) {
-            console.log(arguments);
-            console.error('No Image Result', img);
-        }
+        });
     });
   }
 
@@ -127,7 +133,7 @@ export default class Manager {
   }
 
   async build(meta) {
-    if (!meta) {
+    if (!meta || !meta.text || _.isEmpty(meta.images)) {
         return {
             sound: null,
             images: [],
@@ -135,23 +141,17 @@ export default class Manager {
         };
     }
     meta.name = this.nameOf(meta.title);
-    console.log('images', meta.images)
     meta.images = _.filter(meta.images, img => img.name && !img.name.toLowerCase().match(/.+\.svg/));
     meta.images = _.map(meta.images, function(img){
         img.name = img.name.toLowerCase();
         return img;
     });
     const project = this.structure(meta.name);
-    const data = await Promise.map([
-      this.speak(meta.title, project.text, project.audio),
-      this.downloadImages(project.images, meta.images),
-      writeFile(project.text, meta.text)
-    ]);
-    return {
-        sound: data[0],
-        images: data[1],
-        text: data[2]
-    }
+    await writeFile(project.text, meta.text);
+    const sound = await this.speak(meta.title, project.text, project.audio);
+    const images = await this.downloadImages(project.images, meta.images);
+    const result = { sound, images, text: meta.text, name: meta.name, title: meta.title };
+    return result;
   }
 
   async run(url) {

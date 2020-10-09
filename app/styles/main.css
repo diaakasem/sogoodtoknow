@@ -84,19 +84,21 @@ ul.projects a:hover {
   opacity: 1;
 }
 .splash {
-  max-height: 500px;
-  max-width: 500px;
+  max-height: 700px;
+  max-width: 700px;
   opacity: 1;
-  margin-left: 525px;
+  margin-left: 350px;
+  margin-top: 75px;
 }
 .splash img {
-  border-radius: 50px;
+  border-radius: 20px;
   border: 3px solid #232323;
 }
 .splash h1 {
   font-family: CMHandwriting, arial;
   font-size: 3em;
   color: #e0ffff;
+  width: 700px;
 }
 footer {
   margin-top: 20px;
@@ -121,12 +123,12 @@ footer {
   clear: both;
 }
 #guides {
-  width: 1100px;
-  height: 650px;
+  width: 1280px;
+  height: 720px;
   border: 1px solid white;
   display: block;
   position: fixed;
-  left: 210px;
+  left: 50px;
   top: 10px;
   pointer-events: none;
 }

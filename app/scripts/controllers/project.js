@@ -89,12 +89,14 @@ angular.module("nodeExecuterApp")
       !$scope.isSvg(image.name) && !$scope.isEmpty(image.name)
     );
     let i = 0;
-    const imgPath = $scope.pathOf($scope.project.images[i++].name);
-    $('.image img').attr('src', imgPath);
+    const pImage = $scope.project.images[i++];
+    if (pImage) {
+        const imgPath = $scope.pathOf(pImage.name);
+        $('.image img').attr('src', imgPath);
 
-    // Fitting before speaking
-    $timeout(() => fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
-    , 1000);
+        // Fitting before speaking
+        $timeout(() => fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER }) , 1000);
+    }
 
     $scope.start = _.once(function() {
       $rootScope.audioElement.src = `projects/${$scope.project.name}/audio.aiff.mp3`;

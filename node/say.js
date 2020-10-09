@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import fs from 'fs';
 import Executer from './executer.js';
 
@@ -14,9 +15,13 @@ export default class Say extends Executer {
   }
 
   voice(lang){
-    if (lang == null) { lang = this.defaultlang; }
+    if (_.isNil(lang)) {
+        lang = this.defaultlang;
+    }
     const arr = lang ? voices[lang] : [];
-    if (!arr.length) { return null; }
+    if (_.isEmpty(arr)) {
+        return null;
+    }
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
@@ -44,10 +49,11 @@ export default class Say extends Executer {
     return this.execute(cmd, callback);
   }
 
-  produce(audioFile, textFile, callback){
+  async produce(audioFile, textFile){
     const audio = {};
     const v = this.voice();
     audio.voice = v;
+
     const cmd = {
       name:  `say -o \"${audioFile}\" -f \"${textFile}\" `,
       command: `say -o \"${audioFile}\" -f \"${textFile}\" `
@@ -56,14 +62,14 @@ export default class Say extends Executer {
       cmd.command += `-v ${v} `;
     }
 
-    return this.execute(cmd, () => {
-      return this.toMp3(audioFile, file=> {
-        audio.file = file;
-        return (typeof callback === 'function' ? callback(audio) : undefined);
-      }
-      );
-    }
-    );
+    return new Promise((resolve, reject) => {
+      this.execute(cmd, () => {
+        return this.toMp3(audioFile, file=> {
+            audio.file = file;
+            return resolve(audio);
+        });
+      });
+    });
   }
 
   toMp3(file, callback){

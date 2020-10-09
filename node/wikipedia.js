@@ -85,7 +85,9 @@ export default class Wikipedia {
     const $ = await jqueryify(baseUrl)
     const images = await this.getImages($)
     if (images.length > 2) {
-        return that.scrape(baseUrl);
+        // have to find the real URL - because its random
+        const url = $('head link[rel="canonical"]').attr('href');
+        return that.scrape(url);
     }
     return that.randomEn();
   }
@@ -103,49 +105,37 @@ export default class Wikipedia {
     metadata.keywords = keywords;
     const description = _.take(text.split('. '), 3).join('. ');
     metadata.description = description;
-    const images = await this.getImages($)
-    metadata.images = _.map(images, function(obj, key){
-        return _.isNumber(key) || null;
-    });
-    metadata.images = _.compact(metadata.images);
+    metadata.images = await this.getImages($)
     return metadata
   }
 
   async getImages($) {
-    const imagesFilter = function() { return $(this).attr('width') > 100; };
-    function map() {
+    // const imagesFilter = function() { return $(this).attr('width') > 100; };
+    function map(image) {
+      const width = $(this).attr('width');
+        if (width < 100) {
+            return null;
+        }
       const arr = $(this).attr('src').split('/');
       const name = arr.splice(-1);
-      return {
+      const ret = {
         name: arr[arr.length - 1] + '',
         url: (`http:${arr.join('/')}`).replace(/\/thumb/, '')
       };
+      return ret;
     }
-    const images = $('img[src*="//upload"]').filter(imagesFilter).map(map);
-    return images;
+    // const images = $('img[src*="//upload"]').filter(imagesFilter).map(map);
+    const images = $('img[src*="//upload"]').map(map);
+    const ret = _.compact(images);
+    return ret;
   }
 
   async getText($) {
-    let all;
-    //text = $('#mw-content-text>p').text()
-    $.fn.reverse = [].reverse;
-    const emptyP = $('#mw-content-text p:empty');
-    if (emptyP.length > 0) {
-      all = emptyP.first().prevAll('p, ul, dl').reverse();
-    } else {
-      const secondParagraph = $('#mw-content-text h2');
-
-      // When there is no empty p and only h2
-      if (secondParagraph.length > 0) {
-        all = secondParagraph.first().prevAll('p, ul, dl').reverse();
-        if (!all.length) {
-          all = $('#mw-content-text>p');
-        }
-      } else {
-        all = $('#mw-content-text>p');
-      }
-    }
+    let all = $('#mw-content-text p');
     all = all.filter(":not(:contains('Coordinates'))");
+    if (all.length > 5) {
+        all.splice(0, 5);
+    }
     all.find('li').text(function(i, text){
       if (text.slice(-1) !== '.') {
         text = text + '. ';
@@ -159,7 +149,6 @@ export default class Wikipedia {
     text = text.replace('[citation needed]', '');
     text = text.replace('[clarification needed]', '');
     text = text.replace('[clarification needed],', '');
-    console.log(text);
     return text
   }
 

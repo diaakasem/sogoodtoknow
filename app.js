@@ -76,7 +76,14 @@ async function init () {
     return results
   })
 
-  app.post('/build/random/', (req, res) => m.run('random', end(req, res)))
+  app.post('/build/random/', (req, res) => {
+      m.run('random').then((result) => {
+          end(req, res)(null, result);
+      }).catch((err) => {
+          console.error(err);
+          end(req, res)(err)
+      });
+  })
 
   app.post('/build/today/', (req, res) => m.run(null, end(req, res)))
 

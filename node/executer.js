@@ -1,4 +1,5 @@
 // import sys from 'sys';
+import _ from 'lodash';
 import { exec } from 'child_process';
 
 export default class Executer {
@@ -22,7 +23,9 @@ export default class Executer {
   }
 
   addCallback(name, callback){
-    if (this.callbacks[name] == null) { this.callbacks[name] = []; }
+    if (_.isNil(this.callbacks[name])) {
+        this.callbacks[name] = [];
+    }
     if (callback) {
       return this.callbacks[name].push(callback);
     } else {
@@ -32,7 +35,8 @@ export default class Executer {
 
   execute(cmd, callback){
     this.addCallback(cmd.name, callback);
-    return exec(cmd.command, this.notify(cmd.name));
+    exec(cmd.command, this.notify(cmd.name));
+    console.warn(`Done executing ${cmd.command}`);
   }
 
   puts(error, stdout, stderr){

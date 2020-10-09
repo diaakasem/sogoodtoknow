@@ -12,7 +12,7 @@ angular.module("nodeExecuterApp")
 
     $scope.by_name = '';
     return promise.then(function(result){
-      console.log(result);
+      console.log(result.data);
       return $scope.articles = result.data;
     });
   });
