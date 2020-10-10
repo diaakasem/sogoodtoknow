@@ -1,9 +1,8 @@
-import _ from 'lodash';
-// import { JSDOM } from 'jsdom';
+import Promise from 'bluebird';
 import cheerio from 'cheerio';
 import axios from 'axios';
-
-import Say from './say.js';
+import wiki from 'wikijs'
+import _ from 'lodash'
 
 /**
  * jqueryify
@@ -37,7 +36,7 @@ export default class Wikipedia {
     let words = {};
     _.each(textArr, function(word){
       if (word.length < 5) { return; }
-      return words[word] = words[word] !== undefined  ? words[word] + 1 : 0;
+      return words[word] = _.isNil(words[word]) ? 0 : words[word] + 1;
     });
     words = _.map(words, (value, key)=>
       ({
@@ -79,55 +78,64 @@ export default class Wikipedia {
     return [];
   }
 
+  async bestArticle(scrapedArticles) {
+    const foundArticle = _.maxBy(scrapedArticles, (article) => {
+        return article?.images?.length || 0;
+    });
+    if (_.isEmpty(foundArticle?.images) || foundArticle.images.length < 5) {
+        return null;
+    }
+    return foundArticle;
+  }
+
   async randomEn() {
-    let that = this;
-    const baseUrl = 'http://en.wikipedia.org/wiki/Special:Random';
-    const $ = await jqueryify(baseUrl)
-    const images = await this.getImages($)
-    if (images.length > 2) {
-        // have to find the real URL - because its random
-        const url = $('head link[rel="canonical"]').attr('href');
-        return that.scrape(url);
+    const articles = await wiki.default().random(4);
+    const scrapedArticles = await Promise.map(_.compact(articles), (a) => this.scrape(a))
+    const article = await this.bestArticle(scrapedArticles);
+    if (!article) {
+        return this.randomEn();
     }
-    return that.randomEn();
+    console.log('article', article);
+    return article
   }
 
-  async scrape(url) {
-    const metadata = {
-      wikipedia: url
-    };
-    const $ = await jqueryify(url)
-    const title = $('#firstHeading').text();
-    metadata.title = title;
-    const text = await this.getText($)
-    const keywords = this.keywords(text);
-    metadata.text = text;
-    metadata.keywords = keywords;
-    const description = _.take(text.split('. '), 3).join('. ');
-    metadata.description = description;
-    metadata.images = await this.getImages($)
-    return metadata
+  async scrape(articleTitle) {
+      try {
+          const article = await wiki.default().page(articleTitle);
+          const text = await article.summary();
+          const keywords = this.keywords(text);
+          const description =  _.take(text.split('. '), 3).join('. ');
+          const images = await this.getImages(article);
+          const source = await article.url()
+          const title = articleTitle;
+          return { source, title, images, text, keywords, description };
+      } catch(e) {
+          console.error(e);
+          return null;
+      }
   }
 
-  async getImages($) {
-    // const imagesFilter = function() { return $(this).attr('width') > 100; };
-    function map(image) {
-      const width = $(this).attr('width');
-        if (width < 100) {
-            return null;
-        }
-      const arr = $(this).attr('src').split('/');
-      const name = arr.splice(-1);
-      const ret = {
-        name: arr[arr.length - 1] + '',
-        url: (`http:${arr.join('/')}`).replace(/\/thumb/, '')
-      };
-      return ret;
-    }
-    // const images = $('img[src*="//upload"]').filter(imagesFilter).map(map);
-    const images = $('img[src*="//upload"]').map(map);
-    const ret = _.compact(images);
-    return ret;
+  async getImages(article) {
+      if (!article) {
+          console.warn('No article sent to getImages');
+          return [];
+      }
+      const res = await article.rawImages().then((images) => {
+          return _.compact(_.map(images, (image) => {
+              if (!image.title) {
+                  return null;
+              }
+              const name = _.last(image.title.split(':'));
+              const ext = _.last(name.split('.')).toLowerCase();
+              if (!_.includes(['jpg', 'png', 'jpeg'], ext)) {
+                  return null;
+              }
+              const url = image.imageinfo[0].url;
+              return { name, url };
+          }));
+      });
+      console.info(res);
+      return res;
   }
 
   async getText($) {

@@ -13,8 +13,10 @@ const writeFile = promisify(fs.writeFile)
 
 import Wikipedia from './wikipedia.js';
 import Say from './say.js';
+import GSay from './gsay.js';
 
 const speaker = new Say('en');
+const gspeaker = new GSay();
 
 const cmdString = function(text){
   text = text.replace(/"/g, ' ');
@@ -75,12 +77,26 @@ export default class Manager {
     return {
       root: p,
       images: path.join(p, 'images'),
-      audio: path.join(p, 'audio.aiff'),
+      audio: path.join(p, 'audio.aiff.mp3'),
       text: path.join(p, 'text.txt')
     };
   }
 
-  async speak(title, textFile, audioFile){
+  /**
+   * @param {text} The text to speak
+   * @param {audioFile} The audio file path to save mp3 to
+   *
+   * @returns {undefined}
+   */
+  async speak(text, audioFile){
+    const voice = 'google'; // 'apple'
+    if (voice === 'google') {
+        await gspeaker.produce(audioFile, text)
+        return audioFile
+    }
+    // apple - system
+    // NOTE: project.text is the text file for the project
+    await writeFile(project.text, text);
     const file = await speaker.produce(audioFile, textFile)
     await unlink(audioFile)
     return file;
@@ -141,14 +157,12 @@ export default class Manager {
         };
     }
     meta.name = this.nameOf(meta.title);
-    meta.images = _.filter(meta.images, img => img.name && !img.name.toLowerCase().match(/.+\.svg/));
     meta.images = _.map(meta.images, function(img){
         img.name = img.name.toLowerCase();
         return img;
     });
     const project = this.structure(meta.name);
-    await writeFile(project.text, meta.text);
-    const sound = await this.speak(meta.title, project.text, project.audio);
+    const sound = await this.speak(meta.text, project.audio);
     const images = await this.downloadImages(project.images, meta.images);
     const result = { sound, images, text: meta.text, name: meta.name, title: meta.title };
     return result;
