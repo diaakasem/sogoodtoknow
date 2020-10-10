@@ -4,8 +4,9 @@ import Executer from './executer.js';
 
 const voices = {
   //en: ['tom', 'ava', 'karen', 'lee', 'serena']
-  en: ['tom', 'ava', 'allison', 'samantha', 'susan', 'alex'],
-  ar: ['tarik']
+  // en: ['tom', 'ava', 'allison', 'samantha', 'susan', 'alex'],
+  en: ['ava'],
+  // ar: ['tarik']
 };
 
 export default class Say extends Executer {
