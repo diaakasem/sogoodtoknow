@@ -30,7 +30,7 @@ angular.module("nodeExecuterApp")
   const remover = function(url){
     const h = $http({
       method: 'delete',
-      url
+      url: `http://localhost:4000/${url}`
     });
     h.then(function(res){
       console.log(res);
@@ -39,16 +39,16 @@ angular.module("nodeExecuterApp")
     return h.catch(err=> console.log(err));
   };
 
-  $scope.removeDB = () => remover(`/project/id/${$scope.project._id}`);
-
-  $scope.remove = () => remover(`/project/${$scope.project.name}`);
+  $scope.remove = () => remover(`/project/${$scope.project._id}`);
 
   $scope.rebuild = function() {
+      return;
+      /*
     const url = $scope.project.wikipedia;
     console.log(url);
     const promise = $http({
       method: 'post',
-      url: '/build/url/',
+      url: 'http://localhost:4000/build/${url}/',
       data: {
         url
       }
@@ -60,12 +60,13 @@ angular.module("nodeExecuterApp")
     });
 
     return promise.catch(error=> console.log(error));
+    */
   };
 
   $scope.mark = function(status, stay){
     const h = $http({
       method: 'post',
-      url: `/project/${$scope.project.name}`,
+      url: `http://localhost:4000/project/${$scope.project.name}`,
       data: {
         status
       }
@@ -81,7 +82,10 @@ angular.module("nodeExecuterApp")
     return h.catch(err=> console.log(err));
   };
 
-  const promise = $http({method: 'get', url: `/project/${$routeParams.id}`});
+  const promise = $http({
+      method: 'get',
+      url: `http://localhost:4000/project/${$routeParams.id}`
+  });
   return promise.then(result=> {
     $scope.project = result.data;
     $scope.project.images = _.filter($scope.project.images, image=>

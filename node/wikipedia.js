@@ -90,10 +90,11 @@ export default class Wikipedia {
 
   async randomEn() {
     const articles = await wiki.default().random(4);
-    const scrapedArticles = await Promise.map(_.compact(articles), (a) => this.scrape(a))
+    const scrapedArticles = await Promise.mapSeries(_.compact(articles), (a) => this.scrape(a))
     const article = await this.bestArticle(scrapedArticles);
     if (!article) {
-        return this.randomEn();
+        await Promise.delay(5000)
+        return this.randomEn()
     }
     console.log('article', article);
     return article

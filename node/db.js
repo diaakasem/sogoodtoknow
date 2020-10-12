@@ -2,7 +2,7 @@
 
 import mongoose from 'mongoose'
 
-const projectSchema = new mongoose.Schema({
+export const projectSchema = new mongoose.Schema({
   name: { type: String, index: true },
   title: String,
   text: String,
@@ -16,12 +16,12 @@ const projectSchema = new mongoose.Schema({
     voice: String,
     file: String
   }
-});
+})
 
-async function config (app) {
+export async function config (app) {
   mongoose.model('Project', projectSchema)
   const connectionUrl = app.get('db connect string')
-  console.info('Connection URL', connectionUrl)
+  // console.info('Connection URL', connectionUrl)
   try {
       return await mongoose.connect(connectionUrl + '?useNewUrlParser=true', {
           useNewUrlParser: true
@@ -30,9 +30,4 @@ async function config (app) {
       console.error(e)
       throw e
   }
-}
-
-export default {
-  config,
-  projectSchema
 }

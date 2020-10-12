@@ -5,7 +5,7 @@ angular.module('nodeExecuterApp')
  function($scope, $http) {
   const promise = $http({
     method: 'post',
-    url: '/project/',
+    url: 'http://localhost:4000/project/',
     data: {
       status: 'uploaded'
     }

@@ -11,7 +11,7 @@ angular.module('nodeExecuterApp')
     $scope.inprogress = true;
     const promise = $http({
       method: 'post',
-      url,
+      url: `http://localhost:4000/${url}`,
       data
     });
 
@@ -30,9 +30,9 @@ angular.module('nodeExecuterApp')
     });
   };
 
-  $scope.process = () => exe('/build/url/', {url: $scope.wikipedia});
+  $scope.process = () => exe('build/url/', {url: $scope.wikipedia});
 
-  $scope.today = () => exe('/build/today/');
+  $scope.today = () => exe('build/today/');
 
-  return $scope.random = () => exe('/build/random/');
+  return $scope.random = () => exe('build/random/');
 });

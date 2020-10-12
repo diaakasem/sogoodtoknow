@@ -8,7 +8,7 @@ angular.module("nodeExecuterApp")
 
   const promise = $http({
     method: 'get',
-    url: `/project/${routeParams.name}`
+    url: `http://localhost:4000/project/${routeParams.name}`
   });
   return promise.then(result=> {
     return $scope.project = result.data;
