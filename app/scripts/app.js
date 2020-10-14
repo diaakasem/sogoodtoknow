@@ -17,7 +17,7 @@ app.config(($routeProvider, $locationProvider) => {
   }).when('/videoed', {
     templateUrl: 'views/videoed.html',
     controller: 'VideoedCtrl'
-  }).when('/uploaddata/:name', {
+  }).when('/uploaddata/:id', {
     templateUrl: 'views/uploaddata.html',
     controller: 'UploaddataCtrl'
   }).when('/trends', {

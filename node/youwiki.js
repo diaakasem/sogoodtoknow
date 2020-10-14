@@ -164,7 +164,17 @@ export default class Manager {
     const project = this.structure(meta.name);
     const sound = await this.speak(meta.text, project.audio);
     const images = await this.downloadImages(project.images, meta.images);
-    const result = { sound, images, text: meta.text, name: meta.name, title: meta.title };
+    const result = {
+        sound,
+        images,
+        text: meta.text,
+        name: meta.name,
+        title: meta.title,
+        keywords: meta.keywords,
+        wikipedia: meta.wikipedia,
+        description: meta.description,
+        source: meta.source
+    };
     return result;
   }
 

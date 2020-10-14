@@ -27,10 +27,10 @@ angular.module("nodeExecuterApp")
     return _.str.endsWith(name.toLowerCase(), 'svg');
   };
 
-  const remover = function(url){
+  $scope.remove = function(){
     const h = $http({
       method: 'delete',
-      url: `http://localhost:4000/${url}`
+      url: `http://localhost:4000/project/${$scope.project._id}`
     });
     h.then(function(res){
       console.log(res);
@@ -39,16 +39,11 @@ angular.module("nodeExecuterApp")
     return h.catch(err=> console.log(err));
   };
 
-  $scope.remove = () => remover(`/project/${$scope.project._id}`);
-
   $scope.rebuild = function() {
-      return;
-      /*
-    const url = $scope.project.wikipedia;
-    console.log(url);
+    const url = $scope.project.name;
     const promise = $http({
       method: 'post',
-      url: 'http://localhost:4000/build/${url}/',
+      url: `http://localhost:4000/build/url/${url}`,
       data: {
         url
       }
@@ -60,13 +55,12 @@ angular.module("nodeExecuterApp")
     });
 
     return promise.catch(error=> console.log(error));
-    */
   };
 
   $scope.mark = function(status, stay){
     const h = $http({
       method: 'post',
-      url: `http://localhost:4000/project/${$scope.project.name}`,
+      url: `http://localhost:4000/project/${$scope.project._id}`,
       data: {
         status
       }
@@ -110,18 +104,11 @@ angular.module("nodeExecuterApp")
         const time = Math.floor(($scope.duration * 1000) /$scope.project.images.length);
         const imgCount = $scope.project.images.length;
         const splits = imgCount < 5 ? imgCount : imgCount + 1;
-        const scroll = $('.text')[0].scrollHeight / splits;
-
-        const scrollFn = function() {
-          const scrollTo = scroll * i;
-          return $('.text').animate({ scrollTop: scrollTo }, 1000);
-        };
 
         var changeImage = function() {
           if (i >= imgCount) {
-            scrollFn();
-            $scope.mark('videoed', true);
-            return;
+            // $scope.mark('videoed', true);
+              return
           }
 
           return $('.image img').fadeOut(500, () => {
@@ -129,7 +116,7 @@ angular.module("nodeExecuterApp")
             $('.image img').fadeIn(500);
             $timeout(() => fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
             , 80);
-            scrollFn();
+            // scrollFn();
             i++;
             return $scope.imageTimer = $timeout(changeImage, time);
           }

@@ -1,6 +1,6 @@
 <!-- Docs master nav -->
 <header class="navbar navbar-static-top" role="banner">
-<div class="container">
+<div>
   <h1 ng-show="project.ready">{{ project.title}}</h1>
 </div>
 </header>
@@ -12,7 +12,7 @@ Your browser does not support the audio element.
 
 <!-- Page content of course! -->
 <main id="content" role="main">
-<div class="container"
+<div
      ng-if="project && !project.ready && !project.selectedImage">
   <div class="image"
        ng-repeat="image in project.images track by $index"
@@ -20,7 +20,7 @@ Your browser does not support the audio element.
     <img class="img" ng-src="{{pathOf(image.name)}}"/>
   </div>
 </div>
-<div class="container text-center splash"
+<div class="text-center splash"
      ng-show="project && !project.ready && project.selectedImage">
   <div class="row center">
     <img class="img slash-image"
@@ -32,15 +32,24 @@ Your browser does not support the audio element.
     </h1>
   </div>
 </div>
-<div class="container" ng-show="project && project.ready">
+<div ng-show="project && project.ready">
   <div class="image">
     <img class="img" src=""/>
   </div>
-  <div class="textwrapper">
-    <p class="text">
-    {{project.text}}
-    </p>
+  <!-- <div class="textwrapper"> -->
+    <!-- <p class="text"> -->
+    <!-- {{project.text}} -->
+    <!-- </p> -->
+  <!-- </div> -->
+</div>
+<div class="logo-sub" ng-show="project && project.ready">
+  <H2 class="subscribe">
+    Subscribe
+  </H2>
+  <div class="logo-image">
+    <img class="logo-img" src="./logo.jpeg"/>
   </div>
+
 </div>
 </main>
 
@@ -58,7 +67,7 @@ Your browser does not support the audio element.
       <i class="glyphicon glyphicon-trash"></i>
       Remove
     </button>
-    <a href='#/uploaddata/{{project.name}}' class="btn btn-success">
+    <a href='#/uploaddata/{{project._id}}' class="btn btn-success">
       <i class="glyphicon glyphicon-info-sign"></i>
       Info
     </a>

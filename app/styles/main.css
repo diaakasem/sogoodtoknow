@@ -12,7 +12,17 @@ body {
   color: #333;
 }
 h1 {
-  color: darkslategrey;
+  /* color: darkslategrey; */
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+  color: #282828;
+  text-align: center;
+  font-family: Raleway, Helvetica;
+  Box-shadow:0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 .hero-unit {
   margin: 50px auto 0 auto;
@@ -49,38 +59,20 @@ ul.projects a {
 ul.projects a:hover {
   font-style: none;
 }
-.textwrapper {
-  float: left;
-  width: 500px;
-  margin-left: 20px;
-  padding: 20px;
-  padding-right: 5px;
-  border-radius: 20px;
-  background: slategrey;
-  height: 542px;
-  opacity: 0.8;
-}
-.text {
-  font-size: 20px;
-  text-align: justify;
-  color: snow;
-  font-family: fantasy;
-  overflow-y: auto;
-  height: 500px;
-  padding-right: 15px;
-}
 .image {
   text-align: center;
-  background-color: rgba(220, 210, 200, 0.5);
+  /* background-color: rgba(220, 210, 200, 0.5); */
   padding: 20px;
   border-radius: 20px;
-  height: 542px;
-  width: 542px;
+  height: 480px;
+  width: 100%;
   float: left;
 }
 .image img {
-  max-height: 500px;
-  max-width: 500px;
+  border: 20px solid rgba(220, 210, 200, 0.5);
+  Box-shadow:0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  max-height: 400px;
+  max-width: 400px;
   opacity: 1;
 }
 .splash {
@@ -95,9 +87,11 @@ ul.projects a:hover {
   border: 3px solid #232323;
 }
 .splash h1 {
-  font-family: CMHandwriting, arial;
+  /* font-family: CMHandwriting, arial; */
+  font-family: Raleway, Helvetica;
   font-size: 3em;
-  color: #e0ffff;
+  font-weight: bolder;
+  color: #282828;
   width: 700px;
 }
 footer {
@@ -128,7 +122,30 @@ footer {
   border: 1px solid white;
   display: block;
   position: fixed;
-  left: 50px;
-  top: 10px;
+  left: 0px;
+  top: 0px;
   pointer-events: none;
+}
+.logo-image {
+  float: right;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+.logo-img {
+  /* border: 5px solid #888; */
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  Box-shadow:0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+.subscribe {
+  display: inline-block;
+  float: left;
+  margin: 20px;
+  margin-top: 50px;
+  padding: 10px 20px;
+  color: #282828;
+  font-family: Raleway, Helvetica;
+  font-weight: 500;
+  background-color: rgba(220, 210, 200, 0.5);
 }

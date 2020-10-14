@@ -60,6 +60,7 @@ export default class Wikipedia {
   keywords(text) {
     const words = this.analyze(text);
     const ranks = this.best(words);
+    debugger;
     return _.map(ranks, 'name').join(', ');
   }
 
@@ -89,7 +90,8 @@ export default class Wikipedia {
   }
 
   async randomEn() {
-    const articles = await wiki.default().random(4);
+    const articles = await wiki.default().random(10);
+    console.info('Articles', JSON.stringify(articles));
     const scrapedArticles = await Promise.mapSeries(_.compact(articles), (a) => this.scrape(a))
     const article = await this.bestArticle(scrapedArticles);
     if (!article) {
@@ -108,10 +110,13 @@ export default class Wikipedia {
           const description =  _.take(text.split('. '), 3).join('. ');
           const images = await this.getImages(article);
           const source = await article.url()
+          const wikipedia = await article.url()
           const title = articleTitle;
-          return { source, title, images, text, keywords, description };
+          return { name:title, source, title, images, text, keywords, description, wikipedia };
       } catch(e) {
-          console.error(e);
+          if (e.type != 'invalid-json') {
+              console.error(e);
+          }
           return null;
       }
   }
