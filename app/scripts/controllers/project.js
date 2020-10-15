@@ -99,7 +99,7 @@ angular.module("nodeExecuterApp")
     $scope.start = _.once(function() {
       $rootScope.audioElement.src = `projects/${$scope.project.name}/audio.aiff.mp3`;
       $rootScope.audioElement.play();
-      const onAudio = event=> {
+      const onAudio = (event) => {
         $scope.duration = $rootScope.audioElement.duration;
         const time = Math.floor(($scope.duration * 1000) /$scope.project.images.length);
         const imgCount = $scope.project.images.length;
@@ -108,7 +108,9 @@ angular.module("nodeExecuterApp")
         var changeImage = function() {
           if (i >= imgCount) {
             // $scope.mark('videoed', true);
-              return
+              $('.image img').fadeOut(500);
+              $timeout(()=> $scope.project.done = true, 500);
+              return;
           }
 
           return $('.image img').fadeOut(500, () => {
@@ -119,8 +121,7 @@ angular.module("nodeExecuterApp")
             // scrollFn();
             i++;
             return $scope.imageTimer = $timeout(changeImage, time);
-          }
-          );
+          });
         };
         return $scope.imageTimer = $timeout(changeImage, time);
       };

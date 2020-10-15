@@ -1,7 +1,7 @@
 <!-- Docs master nav -->
 <header class="navbar navbar-static-top" role="banner">
 <div>
-  <h1 ng-show="project.ready">{{ project.title}}</h1>
+  <h1 ng-show="project.ready && !project.done">{{ project.title}}</h1>
 </div>
 </header>
 
@@ -32,24 +32,15 @@ Your browser does not support the audio element.
     </h1>
   </div>
 </div>
-<div ng-show="project && project.ready">
+<div ng-show="project && project.ready && !project.done">
   <div class="image">
     <img class="img" src=""/>
   </div>
-  <!-- <div class="textwrapper"> -->
-    <!-- <p class="text"> -->
-    <!-- {{project.text}} -->
-    <!-- </p> -->
-  <!-- </div> -->
 </div>
-<div class="logo-sub" ng-show="project && project.ready">
-  <H2 class="subscribe">
-    Subscribe
-  </H2>
+<div class="logo-sub" ng-show="project && project.ready && !project.done">
   <div class="logo-image">
     <img class="logo-img" src="./logo.jpeg"/>
   </div>
-
 </div>
 </main>
 
