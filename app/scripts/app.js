@@ -28,6 +28,10 @@ app.config(($routeProvider, $locationProvider) => {
 
 app.run(function($rootScope){
   $rootScope.audioElement = document.createElement('audio');
-  return $rootScope.$on('$routeChangeStart', () => $rootScope.audioElement.pause());
+  $rootScope.backgroundAudio = document.createElement('audio');
+  return $rootScope.$on('$routeChangeStart', () => {
+      $rootScope.audioElement.pause();
+      $rootScope.backgroundAudio.pause();
+  });
 });
 

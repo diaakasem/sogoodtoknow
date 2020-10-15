@@ -57,6 +57,16 @@ angular.module("nodeExecuterApp")
     return promise.catch(error=> console.log(error));
   };
 
+  $scope.selectImage = function(image) {
+      $scope.project.selectedImage = image;
+      if (!$rootScope.backgroundAudio) {
+          $rootScope.backgroundAudio = document.createElement('audio');
+      }
+      $rootScope.backgroundAudio.src = 'sounds/1.mp3';
+      $rootScope.backgroundAudio.volume = 0.02;
+      $rootScope.backgroundAudio.play();
+  };
+
   $scope.mark = function(status, stay){
     const h = $http({
       method: 'post',

@@ -50,6 +50,7 @@ export default class GSay {
             audioEncoding: 'MP3'
         },
     };
+    console.info('VOICE ====> ', request.voice.name);
     // Performs the text-to-speech request
     const [response] = await client.synthesizeSpeech(request);
     // Write the binary audio content to a local file

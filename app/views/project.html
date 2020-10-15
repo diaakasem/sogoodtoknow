@@ -5,18 +5,22 @@
 </div>
 </header>
 
-<audio autoplay>
-<source src="projects/{{project.name}}/audio.aiff.mp3" type="audio/mpeg">
-Your browser does not support the audio element.
-</audio>
+<!-- <audio autoplay> -->
+<!-- <source src="sounds/1.mp3" type="audio/mpeg"> -->
+<!-- Your browser does not support the audio element. -->
+<!-- </audio> -->
+
+<!-- <audio autoplay> -->
+<!-- <source src="projects/{{project.name}}/audio.aiff.mp3" type="audio/mpeg"> -->
+<!-- Your browser does not support the audio element. -->
+<!-- </audio> -->
 
 <!-- Page content of course! -->
 <main id="content" role="main">
-<div
-     ng-if="project && !project.ready && !project.selectedImage">
+<div ng-if="project && !project.ready && !project.selectedImage">
   <div class="image"
        ng-repeat="image in project.images track by $index"
-       ng-click="project.selectedImage = image">
+       ng-click="selectImage(image)">
     <img class="img" ng-src="{{pathOf(image.name)}}"/>
   </div>
 </div>
