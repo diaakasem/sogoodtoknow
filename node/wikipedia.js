@@ -1,31 +1,6 @@
 import Promise from 'bluebird';
-import cheerio from 'cheerio';
-import axios from 'axios';
 import wiki from 'wikijs'
 import _ from 'lodash'
-
-/**
- * jqueryify
- *
- * @param url
- * @param callback
- * @returns {undefined}
- */
-async function jqueryify(url, callback) {
-  const { data } = await axios.get(url)
-  const $ = cheerio.load(data);
-  return $;
-}
-
-const langSelector =
-  //fr: "div#mf-lumieresur p a"
-
-  {en: 'div#mp-tfa b>a'};
-
-  //nl: () ->
-    //$('.radius').first().find('a').last()
-
-  //ar: 'div#mf-fa p>b>a'
 
 export default class Wikipedia {
 
@@ -60,23 +35,7 @@ export default class Wikipedia {
   keywords(text) {
     const words = this.analyze(text);
     const ranks = this.best(words);
-    debugger;
     return _.map(ranks, 'name').join(', ');
-  }
-
-  async dailyArticle(lang) {
-    let that = this;
-    if (lang) {
-      lang = 'en';
-    }
-    const baseUrl = `http://${lang}.wikipedia.org`;
-    const $ = await jqueryify(baseUrl)
-    const link = $(langSelector[lang]).first();
-    if (link.length) {
-        const url = baseUrl + link.attr('href');
-        return that.scrape(url);
-    }
-    return [];
   }
 
   async bestArticle(scrapedArticles) {
@@ -91,14 +50,12 @@ export default class Wikipedia {
 
   async randomEn() {
     const articles = await wiki.default().random(10);
-    console.info('Articles', JSON.stringify(articles));
     const scrapedArticles = await Promise.mapSeries(_.compact(articles), (a) => this.scrape(a))
     const article = await this.bestArticle(scrapedArticles);
     if (!article) {
         await Promise.delay(5000)
         return this.randomEn()
     }
-    console.log('article', article);
     return article
   }
 
@@ -133,38 +90,14 @@ export default class Wikipedia {
               }
               const name = _.last(image.title.split(':'));
               const ext = _.last(name.split('.')).toLowerCase();
-              if (!_.includes(['jpg', 'png', 'jpeg'], ext)) {
+              // if (!_.includes(['jpg', 'png', 'jpeg'], ext)) {
+              if (!_.includes(['jpg', 'jpeg'], ext)) {
                   return null;
               }
               const url = image.imageinfo[0].url;
               return { name, url };
           }));
       });
-      console.info(res);
       return res;
   }
-
-  async getText($) {
-    let all = $('#mw-content-text p');
-    all = all.filter(":not(:contains('Coordinates'))");
-    if (all.length > 5) {
-        all.splice(0, 5);
-    }
-    all.find('li').text(function(i, text){
-      if (text.slice(-1) !== '.') {
-        text = text + '. ';
-      }
-      return text;
-    });
-    let text = all.text();
-    // Removing [1] reference numbers
-    text = text.replace(/\[\d+\]/g, '');
-    text = text.replace(/\.([A-Z])/g, '. $1');
-    text = text.replace('[citation needed]', '');
-    text = text.replace('[clarification needed]', '');
-    text = text.replace('[clarification needed],', '');
-    return text
-  }
-
 };
-

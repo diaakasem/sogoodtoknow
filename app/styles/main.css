@@ -5,7 +5,8 @@
 }
 body {
   background: #fafafa;
-  background-image: url('bg.jpg');
+  /* background-image: url('bg.jpg'); */
+  background-image: url('https://source.unsplash.com/1600x900/?background');
   background-repeat: no-repeat;
   background-size: cover;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -14,6 +15,7 @@ body {
 h1 {
   /* color: darkslategrey; */
   padding-top: 10px;
+  background-color: rgba(200, 200, 200, 0.9);
   padding-bottom: 10px;
   padding-left: 0px;
   padding-right: 0px;

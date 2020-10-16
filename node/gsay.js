@@ -8,16 +8,12 @@ const writeFile = util.promisify(fs.writeFile);
 const client = new textToSpeech.TextToSpeechClient();
 
 const voices = [
-    "en-US-Wavenet-G",
-    "en-US-Wavenet-H",
-    "en-US-Wavenet-I",
-    "en-US-Wavenet-J",
-    "en-US-Wavenet-A",
-    "en-US-Wavenet-B",
-    "en-US-Wavenet-C",
-    "en-US-Wavenet-D",
-    "en-US-Wavenet-E",
-    "en-US-Wavenet-F",
+    "en-US-Wavenet-G",    // Really nice - male
+    "en-US-Wavenet-H",    // Really nice - male
+    "en-US-Wavenet-D",    // Amazing - Male
+    "en-US-Wavenet-C",    // SUPER - Female
+    "en-US-Wavenet-E",    // The best ever - Female
+    "en-US-Wavenet-F",    // More than super - Female
 ];
 export default class GSay {
 
