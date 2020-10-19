@@ -21,6 +21,7 @@
   <div class="image"
        ng-repeat="image in project.images track by $index"
        ng-click="selectImage(image)">
+    <!-- <p> {{image.name}} </p> -->
     <img class="img" ng-src="{{pathOf(image.name)}}"/>
   </div>
 </div>
@@ -43,7 +44,7 @@
 </div>
 <div class="logo-sub" ng-show="project && project.ready && !project.done">
   <div class="logo-image">
-    <img class="logo-img" src="./logo.jpeg"/>
+    <img class="logo-img" src="./logo.png"/>
   </div>
 </div>
 </main>

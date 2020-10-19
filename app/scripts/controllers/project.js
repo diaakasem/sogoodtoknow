@@ -61,9 +61,10 @@ angular.module("nodeExecuterApp")
       $scope.project.selectedImage = image;
       if (!$rootScope.backgroundAudio) {
           $rootScope.backgroundAudio = document.createElement('audio');
+          $rootScope.backgroundAudio.setAttribute("loop", "");
       }
       $rootScope.backgroundAudio.src = 'sounds/1.mp3';
-      $rootScope.backgroundAudio.volume = 0.02;
+      $rootScope.backgroundAudio.volume = 0.03;
       $rootScope.backgroundAudio.play();
   };
 

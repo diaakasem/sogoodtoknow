@@ -63,13 +63,23 @@ export default class Wikipedia {
       try {
           const article = await wiki.default().page(articleTitle);
           const text = await article.summary();
-          const keywords = this.keywords(text);
-          const description =  _.take(text.split('. '), 3).join('. ');
+          const cleanedText = this.cleanText(text);
+          const keywords = this.keywords(cleanedText);
+          const description =  _.take(cleanedText.split('. '), 3).join('. ');
           const images = await this.getImages(article);
           const source = await article.url()
           const wikipedia = await article.url()
           const title = articleTitle;
-          return { name:title, source, title, images, text, keywords, description, wikipedia };
+          return {
+              name:title,
+              source,
+              title,
+              images,
+              text: cleanedText,
+              keywords,
+              description,
+              wikipedia
+          };
       } catch(e) {
           if (e.type != 'invalid-json') {
               console.error(e);
@@ -99,5 +109,17 @@ export default class Wikipedia {
           }));
       });
       return res;
+  }
+
+  cleanText(text) {
+      // Removing [1] reference numbers -- not needed anymore
+      // text = text.replace(/\[\d+\]/g, '');
+      text = text.replace(/\.([A-Z])/g, '. $1');
+      // Remove all text in ( )
+      text = text.replace(/\(.*?\)/g, '');
+      // text = text.replace('[citation needed]', '');
+      // text = text.replace('[clarification needed]', '');
+      // text = text.replace('[clarification needed],', '');
+      return text
   }
 };

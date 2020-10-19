@@ -4,6 +4,7 @@ import path from 'path'
 import mongoose from 'mongoose'
 import TwitterClass from './node/twitter.js'
 import Manager from './node/youwiki.js'
+import Promise from 'bluebird';
 
 const Twitter = new TwitterClass()
 
@@ -29,11 +30,14 @@ export default async function router(app) {
     const m = new Manager()
 
     app.post('/build/url/', async function (req, res) {
-        const { url } = req.body
+        const { url } = req.body;
         try {
-            const result = await m.run(url)
-            result.status = 'created'
-            await ProjectModel.create(result)
+            const titles = url.split('|');
+            await Promise.mapSeries(titles, async (title) => {
+                const result = await m.run(title)
+                result.status = 'created'
+                await ProjectModel.create(result)
+            });
             return res.json({ result: 'done' })
         } catch (err) {
             console.error(err);
@@ -53,11 +57,12 @@ export default async function router(app) {
         }
     })
 
+    // @deprecated
     app.post('/build/today/', async (req, res) => {
         try {
-            const result = await m.run(null)
-            result.status = 'created'
-            await ProjectModel.create(result)
+            // const result = await m.run(null)
+            // result.status = 'created'
+            // await ProjectModel.create(result)
             return res.json({ result: 'done' })
         } catch (err) {
             console.error(err);

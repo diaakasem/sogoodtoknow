@@ -15,7 +15,7 @@
     <!-- <li ng-repeat="article in articles | filter:{title: by_name}"> -->
     <li ng-repeat="article in articles">
     <a href="#/project/{{article._id}}">
-      {{article.name || article.title || article._id || article.description.substring(0, 100)}}
+      {{article.title || article.name || article._id || article.description.substring(0, 100)}}
     </a>
     </li>
   </ul>

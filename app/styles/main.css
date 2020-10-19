@@ -6,6 +6,7 @@
 body {
   background: #fafafa;
   /* background-image: url('bg.jpg'); */
+  /* background-image: url('https://source.unsplash.com/1600x900/?background'); */
   background-image: url('https://source.unsplash.com/1600x900/?background');
   background-repeat: no-repeat;
   background-size: cover;

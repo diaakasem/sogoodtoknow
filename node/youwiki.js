@@ -2,32 +2,17 @@ import axios from 'axios';
 import path from 'path';
 import _ from 'lodash';
 import mkdirp from 'mkdirp';
-import async from 'async';
 import im from 'imagemagick';
 import fs from 'fs';
-import request from 'request';
 import Promise from 'bluebird';
 import { promisify } from 'util';
 const unlink = promisify(fs.unlink)
 const writeFile = promisify(fs.writeFile)
 
 import Wikipedia from './wikipedia.js';
-import Say from './say.js';
 import GSay from './gsay.js';
 
-const speaker = new Say('en');
 const gspeaker = new GSay();
-
-const cmdString = function(text){
-  text = text.replace(/"/g, ' ');
-  text = text.replace(/'/g, '');
-  text = text.replace(/\(/g, '\\(');
-  text = text.replace(/\)/g, '\\)');
-  text = text.replace(/\|/g, '\\| ');
-  text = text.replace(/\[/g, '\\[');
-  text = text.replace(/\]/g, '\\]');
-  return text;
-};
 
 function pad(num, size) {
   if (isNaN(size)) {
@@ -52,7 +37,6 @@ async function download (uri, filename) {
     response.data.on('end', () => {
       resolve();
     });
-
     response.data.on('error', () => {
       reject();
     });
@@ -89,17 +73,8 @@ export default class Manager {
    * @returns {undefined}
    */
   async speak(text, audioFile){
-    const voice = 'google'; // 'apple'
-    if (voice === 'google') {
-        await gspeaker.produce(audioFile, text)
-        return audioFile
-    }
-    // apple - system
-    // NOTE: project.text is the text file for the project
-    await writeFile(project.text, text);
-    const file = await speaker.produce(audioFile, textFile)
-    await unlink(audioFile)
-    return file;
+      await gspeaker.produce(audioFile, text)
+      return audioFile
   }
 
   async downloadImages(uri, images, callback){
@@ -178,14 +153,18 @@ export default class Manager {
     return result;
   }
 
-  async run(url) {
+  async run(title) {
+      if (!title || !_.isString(title)) {
+          // metadata = await this.wiki.dailyArticle('en')
+          // return this.build(metadata)
+          return;
+      }
+      title = title.trim();
       let metadata;
-      if (url && (url === 'random')) {
+      if (title === 'random') {
           metadata = await this.wiki.randomEn();
-      } else if (url && (url !== 'random')) {
-          metadata = await this.wiki.scrape(url);
-      } else {
-          metadata = await this.wiki.dailyArticle('en')
+      } else { // I wrote a title manually
+          metadata = await this.wiki.scrape(title);
       }
       return this.build(metadata)
   }
