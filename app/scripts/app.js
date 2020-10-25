@@ -29,6 +29,8 @@ app.config(($routeProvider, $locationProvider) => {
 app.run(function($rootScope){
   $rootScope.audioElement = document.createElement('audio');
   $rootScope.backgroundAudio = document.createElement('audio');
+  $rootScope.backgroundTheme = 'background';
+  $rootScope.backgroundThemeName = $rootScope.backgroundTheme;
   return $rootScope.$on('$routeChangeStart', () => {
       $rootScope.audioElement.pause();
       $rootScope.backgroundAudio.pause();

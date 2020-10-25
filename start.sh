@@ -5,5 +5,4 @@
 # source ./env-file
 # node -r esm app.js
 # node --inspect-brk -r esm app.js
-node app.js
-
+npm run start

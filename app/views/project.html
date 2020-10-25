@@ -1,7 +1,8 @@
 <!-- Docs master nav -->
 <header class="navbar navbar-static-top" role="banner">
 <div>
-  <h1 ng-show="project.ready && !project.done">{{ project.title}}</h1>
+  <!-- <h1 ng-show="project.ready && !project.done">{{ project.title}}</h1> -->
+  <h1 ng-show="project && project.selectedImage">{{ project.title}}</h1>
 </div>
 </header>
 
@@ -25,16 +26,10 @@
     <img class="img" ng-src="{{pathOf(image.name)}}"/>
   </div>
 </div>
-<div class="text-center splash"
-     ng-show="project && !project.ready && project.selectedImage">
-  <div class="row center">
-    <img class="img slash-image"
+<div ng-show="project && !project.ready && project.selectedImage">
+  <div class="image">
+    <img class="img"
          ng-src="{{pathOf(project.selectedImage.name)}}"/>
-  </div>
-  <div class="row">
-    <h1 class="text-center">
-      {{project.title}}
-    </h1>
   </div>
 </div>
 <div ng-show="project && project.ready && !project.done">
@@ -42,9 +37,13 @@
     <img class="img" src=""/>
   </div>
 </div>
-<div class="logo-sub" ng-show="project && project.ready && !project.done">
+<div class="logo-sub" ng-show="project && !project.done">
   <div class="logo-image">
-    <img class="logo-img" src="./logo.png"/>
+    <!-- <img class="logo-img" src="./logo-icon.png"/> -->
+    <img class="logo-img" src="./logo-text.png"/>
+  </div>
+  <div class="subscribe-image" ng-show="subscribe">
+    <img class="subscribe-img" src="./subscribe.gif"/>
   </div>
 </div>
 </main>
@@ -53,7 +52,6 @@
 <!-- Footer
 ================================================== -->
 <footer class="row navbar-fixed-bottom" role="contentinfo">
-<div class="container">
   <div class="row text-center" style="padding-top: 10px;">
     <a href='#/' class="btn btn-success">
       <i class="glyphicon glyphicon-arrow-left"></i>
@@ -79,10 +77,27 @@
       <i class="glyphicon glyphicon-ok"></i>
       Videoed
     </button>
+    <span class=" col-sm-3">
+    <form class="form-inline" ng-submit="setBackgroundTheme()">
+        <span class="input-group">
+          <input type="text"
+                 placeholder="Theme Background"
+                 class="form-control"
+          ng-model="backgroundThemeName">
+          <span class="input-group-btn">
+            <button class="btn btn-success"
+                    type="button">
+              <i class="glyphicon glyphicon-leaf"></i>
+              Set Style
+            </button>
+          </span>
+        </span>
+    </form>
+    </span>
+
     <button class="btn btn-success" ng-click="begin()"> Start
       <i class="glyphicon glyphicon-play"></i>
     </button>
-  </div>
 </div>
 </footer>
 <div id="guides">

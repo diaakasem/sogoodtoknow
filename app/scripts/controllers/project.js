@@ -5,7 +5,9 @@
 
 
 angular.module("nodeExecuterApp")
-.controller("ProjectCtrl",function($rootScope, $scope, $http, $routeParams, $timeout, $location) {
+.controller("ProjectCtrl",function(
+    $rootScope, $scope, $http, $routeParams, $timeout, $location
+) {
 
   $scope.project = {};
   $scope.project.images = [];
@@ -25,6 +27,15 @@ angular.module("nodeExecuterApp")
   $scope.isSvg = function(name){
     if (!name) { return false; }
     return _.str.endsWith(name.toLowerCase(), 'svg');
+  };
+
+  $scope.setBackgroundTheme = function() {
+      if ($scope.backgroundThemeName != 'background') {
+          $timeout(function() {
+              $rootScope.backgroundTheme = $scope.backgroundThemeName || 'background';
+          }, 100);
+      }
+      $rootScope.backgroundTheme = 'background';
   };
 
   $scope.remove = function(){
@@ -114,26 +125,33 @@ angular.module("nodeExecuterApp")
         $scope.duration = $rootScope.audioElement.duration;
         const time = Math.floor(($scope.duration * 1000) /$scope.project.images.length);
         const imgCount = $scope.project.images.length;
-        const splits = imgCount < 5 ? imgCount : imgCount + 1;
+        // const splits = imgCount < 5 ? imgCount : imgCount + 1;
 
         var changeImage = function() {
           if (i >= imgCount) {
-            // $scope.mark('videoed', true);
               $('.image img').fadeOut(500);
               $timeout(()=> $scope.project.done = true, 500);
               return;
           }
-
+          $scope.subscribe = false;
+          if (i === 3) {
+              $scope.subscribe = true;
+          }
+          i++;
           return $('.image img').fadeOut(500, () => {
-            $('.image img').attr('src', $scope.pathOf($scope.project.images[i].name));
-            $('.image img').fadeIn(500);
-            $timeout(() => fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER })
-            , 80);
-            // scrollFn();
-            i++;
-            return $scope.imageTimer = $timeout(changeImage, time);
+              const image = $scope.project.images[i];
+              if (image) {
+                  $('.image img').attr('src', $scope.pathOf(image.name));
+              }
+              $('.image img').fadeIn(500);
+              $timeout(() => fit($('.image img')[0], $('.image')[0], {
+                  vAlign: fit.CENTER
+              }) , 80);
+              $timeout.cancel($scope.imageTimer);
+              return $scope.imageTimer = $timeout(changeImage, time);
           });
         };
+        $timeout.cancel($scope.imageTimer);
         return $scope.imageTimer = $timeout(changeImage, time);
       };
 

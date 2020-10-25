@@ -1,25 +1,31 @@
 version: '3'
 services:
-  #
-    # build:
-      # context: .
-      # dockerfile: ./Dockerfile
-    # image: rickydunlop/nodejs-ffmpeg
 
-  # web:
-    # image: node:14
-    # working_dir: /src
-    # volumes:
-      # - .:/src
-    # command:
-      # - ./start.sh
-    # env_file:
-      # - docker-compose-env
-    # ports:
-      # - 5859:5859
-      # - 4000:4000
+  frontend:
+    image: nginx:alpine
+    working_dir: /usr/share/nginx/html
+    volumes:
+      - ./app:/usr/share/nginx/html:ro
+    ports:
+      - 80:80
     # depends_on:
       # - mongo
+      # - backend
+
+  backend:
+    image: node:14
+    working_dir: /src
+    volumes:
+      - .:/src
+    command:
+      - app.js
+    env_file:
+      - docker-compose-env
+    ports:
+      - 5859:5859
+      - 4000:4000
+    depends_on:
+      - mongo
 
   mongo:
     image: mongo

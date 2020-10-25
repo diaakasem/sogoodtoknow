@@ -1,4 +1,5 @@
 #!/bin/sh
 # mongodb='mongodb+srv://diaa-dwikia:jcuWdqhfea53OmVo@cluster0-px3ml.mongodb.net/test?retryWrites=true&w=majority'
-mongodb='mongodb://mongo:27017/dwikia'
+mongodb='mongodb://mongo:27017/test'
+GOOGLE_APPLICATION_CREDENTIALS="/src/Google-Dwikia-voice-9054c32e2fc6.json"
 
