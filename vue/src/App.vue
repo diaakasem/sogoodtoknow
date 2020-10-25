@@ -1,15 +1,27 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <img alt="Vue logo"
+       src="./assets/logo-icon.png"
+       width="200"
+       height="200">
+  <Projects :projects="projects"/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Projects from './components/Projects.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Projects
+  },
+  data: () => {
+    return {
+      projects: [{
+        title: 'Hello'
+      }, {
+        title: 'World'
+      }]
+    };
   }
 }
 </script>
