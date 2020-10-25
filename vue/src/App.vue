@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import Projects from './components/Projects.vue'
 
 export default {
@@ -17,11 +18,23 @@ export default {
   data: () => {
     return {
       projects: [{
-        title: 'Hello'
+        title: 'Hello',
+        _id: '123'
       }, {
-        title: 'World'
+        title: 'World',
+        _id: '124'
       }]
     };
+  },
+  mounted() {
+    axios.post('http://localhost:4000/project/', {
+      status: 'created'
+    }).then((result) => {
+      console.log(result.data);
+      return this.projects = result.data;
+    }).catch(function (e){
+        console.error(e);
+    });
   }
 }
 </script>

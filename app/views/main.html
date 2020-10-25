@@ -1,18 +1,8 @@
 <div class="hero-unit container">
 
   <h1>So Good To Know</h1>
-
   <tabnav selected='created' filter="by_name"></tabnav>
-
-  <!-- <span class="input-group pull-right col-xs-4"> -->
-    <!-- <span class="input-group-addon"> -->
-      <!-- <i class="glyphicon glyphicon-search"></i> -->
-    <!-- </span> -->
-    <!-- <input type="search" placeholder="Filter" class="form-control" -->
-    <!-- ng-model="filter"> -->
-  <!-- </span> -->
   <ul class="projects" ng-if="articles && articles.length">
-    <!-- <li ng-repeat="article in articles | filter:{title: by_name}"> -->
     <li ng-repeat="article in articles">
     <a href="#/project/{{article._id}}">
       {{article.title || article.name || article._id || article.description.substring(0, 100)}}
