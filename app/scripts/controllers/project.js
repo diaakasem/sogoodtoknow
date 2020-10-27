@@ -118,9 +118,11 @@ angular.module("nodeExecuterApp")
         $timeout(() => fit($('.image img')[0], $('.image')[0], { vAlign: fit.CENTER }) , 1000);
     }
 
+    $scope.subscribe = false;
     $scope.start = _.once(function() {
       $rootScope.audioElement.src = `projects/${$scope.project.name}/audio.aiff.mp3`;
       $rootScope.audioElement.play();
+      $scope.subscribe = true;
       const onAudio = (event) => {
         $scope.duration = $rootScope.audioElement.duration;
         const time = Math.floor(($scope.duration * 1000) /$scope.project.images.length);
@@ -133,9 +135,10 @@ angular.module("nodeExecuterApp")
               $timeout(()=> $scope.project.done = true, 500);
               return;
           }
-          $scope.subscribe = false;
-          if (i === 3) {
+          if (!i || i <= 1) {
               $scope.subscribe = true;
+          } else {
+              $scope.subscribe = false;
           }
           i++;
           return $('.image img').fadeOut(500, () => {

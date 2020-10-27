@@ -137,7 +137,11 @@ export default class Manager {
         return img;
     });
     const project = this.structure(meta.name);
-    const sound = await this.speak(meta.text, project.audio);
+    const promotion = `We hope you have enjoyed this video.
+        If so; Like, Share and Subscribe.
+        If not; write us in the comments how to improve.`;
+    const spokenText = `${meta.text} ${promotion}`
+    const sound = await this.speak(spokenText, project.audio);
     const images = await this.downloadImages(project.images, meta.images);
     const result = {
         sound,
