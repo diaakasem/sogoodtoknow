@@ -118,16 +118,17 @@ footer {
 .logo-img {
   height: 100px;
   border-radius: 50px;
+  background-color: rgba(220, 210, 200, 0.1);
   Box-shadow:0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 .subscribe-image {
   position: absolute;
   top: 600px;
-  left: 500px;
+  left: 440px;
 }
 .subscribe-img {
-  height: 100px;
-  width: 304px;
+  height: 120px;
+  /* width: 304px; */
   border-radius: 5px;
-  Box-shadow:0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  /* Box-shadow:0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23); */
 }

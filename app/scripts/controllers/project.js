@@ -75,7 +75,7 @@ angular.module("nodeExecuterApp")
           $rootScope.backgroundAudio.setAttribute("loop", "");
       }
       $rootScope.backgroundAudio.src = 'sounds/1.mp3';
-      $rootScope.backgroundAudio.volume = 0.03;
+      $rootScope.backgroundAudio.volume = 0.1;
       $rootScope.backgroundAudio.play();
   };
 
@@ -119,58 +119,66 @@ angular.module("nodeExecuterApp")
     }
 
     $scope.subscribe = false;
-    $scope.start = _.once(function() {
-      $rootScope.audioElement.src = `projects/${$scope.project.name}/audio.aiff.mp3`;
-      $rootScope.audioElement.play();
-      $scope.subscribe = true;
-      const onAudio = (event) => {
-        $scope.duration = $rootScope.audioElement.duration;
-        const time = Math.floor(($scope.duration * 1000) /$scope.project.images.length);
-        const imgCount = $scope.project.images.length;
-        // const splits = imgCount < 5 ? imgCount : imgCount + 1;
+    $scope.start = function() {
+        // Always wait 5 seconds before starting
+        $rootScope.audioElement.src = `projects/${$scope.project.name}/audio.aiff.mp3`;
+        $rootScope.audioElement.play();
+        $scope.subscribe = true;
+        const onAudio = (event) => {
+            $scope.duration = $rootScope.audioElement.duration;
+            const time = Math.floor(($scope.duration * 1000) /$scope.project.images.length);
+            const imgCount = $scope.project.images.length;
+            // const splits = imgCount < 5 ? imgCount : imgCount + 1;
 
-        var changeImage = function() {
-          if (i >= imgCount) {
-              $('.image img').fadeOut(500);
-              $timeout(()=> $scope.project.done = true, 500);
-              return;
-          }
-          if (!i || i <= 1) {
-              $scope.subscribe = true;
-          } else {
-              $scope.subscribe = false;
-          }
-          i++;
-          return $('.image img').fadeOut(500, () => {
-              const image = $scope.project.images[i];
-              if (image) {
-                  $('.image img').attr('src', $scope.pathOf(image.name));
-              }
-              $('.image img').fadeIn(500);
-              $timeout(() => fit($('.image img')[0], $('.image')[0], {
-                  vAlign: fit.CENTER
-              }) , 80);
-              $timeout.cancel($scope.imageTimer);
-              return $scope.imageTimer = $timeout(changeImage, time);
-          });
+            var changeImage = function() {
+                if (i >= imgCount) {
+                    $('.image img').fadeOut(500);
+                    $timeout(()=> $scope.project.done = true, 500);
+                    return;
+                }
+                if (!i || i % 3 === 0) {
+                    $scope.subscribe = true;
+                } else {
+                    $scope.subscribe = false;
+                }
+                i++;
+                return $('.image img').fadeOut(500, () => {
+                    const image = $scope.project.images[i];
+                    if (image) {
+                        $('.image img').attr('src', $scope.pathOf(image.name));
+                    }
+                    $('.image img').fadeIn(500);
+                    $timeout(() => fit($('.image img')[0], $('.image')[0], {
+                        vAlign: fit.CENTER
+                    }) , 80);
+                    $timeout.cancel($scope.imageTimer);
+                    return $scope.imageTimer = $timeout(changeImage, time);
+                });
+            };
+            $timeout.cancel($scope.imageTimer);
+            return $scope.imageTimer = $timeout(changeImage, time);
         };
-        $timeout.cancel($scope.imageTimer);
-        return $scope.imageTimer = $timeout(changeImage, time);
-      };
 
-      $rootScope.audioElement.addEventListener("loadedmetadata", onAudio);
-      return $rootScope.$on('$routeChangeStart', function() {
-        $timeout.cancel($scope.imageTimer);
-        return $rootScope.audioElement.removeEventListener("loadedmetadata", onAudio);
-      });
-    });
+        $rootScope.audioElement.addEventListener("loadedmetadata", onAudio);
+        return $rootScope.$on('$routeChangeStart', function() {
+            $timeout.cancel($scope.imageTimer);
+            return $rootScope.audioElement.removeEventListener("loadedmetadata", onAudio);
+        });
+    };
 
     $scope.begin = function() {
-      $scope.project.ready = true;
-      $scope.start();
-      $timeout(() => fit($('.image img')[0], $('.image')[0], {
-        vAlign: fit.CENTER
-      }), 1);
+        $scope.subscribe = false;
+        $timeout(function() {
+            $('.image img').fadeOut(500);
+        }, 4500);
+        $timeout(function() {
+            $scope.project.ready = true;
+            $scope.start();
+            $timeout(() => fit($('.image img')[0], $('.image')[0], {
+                vAlign: fit.CENTER
+            }), 1);
+            $('.image img').fadeIn(500);
+        }, 5000);
     };
   }
   );

@@ -1,11 +1,26 @@
 <!-- Docs master nav -->
-<div class="container">
- <h3>
-   {{project.description}}<br/>
-   Wikipedia: {{project.wikipedia}}
- </h3>
+<div class="container" style="background-color: rgba(255,255,255, 0.7)">
  <h1>{{project.title}}</h1>
- <h2>{{project.keywords}}</h2>
+ <hr/>
+ <h3>Description</h3>
+ <div>
+   <p>
+   {{project.description}}.
+   </p>
+   <p>
+   <div>
+     <span>Source: </span>{{project.wikipedia}}
+   </div>
+   <div>
+     <span>License: </span>https://creativecommons.org/licenses/by-sa/3.0/
+   </div>
+   </p>
+ </div>
+ <hr/>
+ <div>
+   <h3> Keywords / Tags </h3>
+   <p>{{project.keywords}}</p>
+ </div>
  </div>
 
 <!-- Footer

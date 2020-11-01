@@ -21,7 +21,9 @@ export default class Wikipedia {
     );
     words = _.omit(words, ['this', 'that', 'south', 'north', 'east', 'west',
     'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here',
-    'against', 'their', 'other', 'where', 'which']);
+    'against', 'their', 'other', 'where', 'which', 'should', 'areas', 'within',
+    'standard', 'service', 'cited', 'including', 'using', 'these', 'mainly',
+    'which', 'years', 'century', 'under', 'after', 'become']);
     return words;
   }
 
@@ -34,7 +36,7 @@ export default class Wikipedia {
 
   keywords(text) {
     const words = this.analyze(text);
-    const ranks = this.best(words);
+    const ranks = this.best(words, 20);
     return _.map(ranks, 'name').join(', ');
   }
 
@@ -64,7 +66,7 @@ export default class Wikipedia {
           const article = await wiki.default().page(articleTitle);
           const text = await article.summary();
           const cleanedText = this.cleanText(text);
-          const keywords = this.keywords(cleanedText);
+          const keywords = `${articleTitle}, ${this.keywords(cleanedText)}`;
           const description =  _.take(cleanedText.split('. '), 3).join('. ');
           const images = await this.getImages(article);
           const source = await article.url()
