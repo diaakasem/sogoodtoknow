@@ -32,9 +32,11 @@ angular.module("nodeExecuterApp")
   $scope.setBackgroundTheme = function() {
       if ($scope.backgroundThemeName != 'background') {
           $timeout(function() {
+              $rootScope.rand = Math.random();
               $rootScope.backgroundTheme = $scope.backgroundThemeName || 'background';
           }, 100);
       }
+      $rootScope.rand = Math.random();
       $rootScope.backgroundTheme = 'background';
   };
 

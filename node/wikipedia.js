@@ -5,12 +5,22 @@ import _ from 'lodash'
 export default class Wikipedia {
 
   analyze(text){
+      const omitWords = [
+          'this', 'that', 'south', 'north', 'east', 'west', 'southern',
+          'northen', 'between', 'after', 'before', 'then', 'there', 'here',
+          'against', 'their', 'other', 'where', 'should', 'areas', 'within',
+          'standard', 'service', 'cited', 'including', 'using', 'these', 'mainly',
+          'which', 'years', 'century', 'under', 'after', 'become', 'those',
+          'while', 'when', 'if', 'for', 'how', 'however'
+      ];
     text = text.toLowerCase();
     let textArr = text.split(' ');
     textArr = _.map(textArr, word=> word = word.replace(/[,\.\)\(]/, ''));
     let words = {};
     _.each(textArr, function(word){
-      if (word.length < 5) { return; }
+      if (word.length < 5 || _.includes(omitWords, word)) {
+          return;
+      }
       return words[word] = _.isNil(words[word]) ? 0 : words[word] + 1;
     });
     words = _.map(words, (value, key)=>
@@ -19,11 +29,6 @@ export default class Wikipedia {
         rank: value
       })
     );
-    words = _.omit(words, ['this', 'that', 'south', 'north', 'east', 'west',
-    'southern', 'northen', 'between', 'after', 'before', 'then', 'there', 'here',
-    'against', 'their', 'other', 'where', 'which', 'should', 'areas', 'within',
-    'standard', 'service', 'cited', 'including', 'using', 'these', 'mainly',
-    'which', 'years', 'century', 'under', 'after', 'become']);
     return words;
   }
 

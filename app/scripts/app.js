@@ -30,6 +30,7 @@ app.run(function($rootScope){
   $rootScope.audioElement = document.createElement('audio');
   $rootScope.backgroundAudio = document.createElement('audio');
   $rootScope.backgroundTheme = 'background';
+  $rootScope.rand = Math.random();
   $rootScope.backgroundThemeName = $rootScope.backgroundTheme;
   return $rootScope.$on('$routeChangeStart', () => {
       $rootScope.audioElement.pause();
