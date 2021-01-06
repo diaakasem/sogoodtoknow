@@ -6,7 +6,7 @@
     "@babel/polyfill": "^7.11.5",
     "@babel/runtime-corejs2": "^7.11.2",
     "@google-cloud/text-to-speech": "^3.1.1",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "bluebird": "^3.7.2",
     "body-parser": "1.19.0",
     "cheerio": "^1.0.0-rc.3",
